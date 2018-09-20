@@ -12,7 +12,12 @@ class Automata:
         else:
             raise ValueError('Invalid input to create an automata.')
 
+
     def _validate(self, alphabet, states, q0, final_states, transitions):
+        """Do validation about type, size and inner relationship.
+
+        To keep simple, dont has validation in transitions or complex validations in alphabet.
+        """
         if not type(alphabet) is set or \
            not type(states) is set or \
            not type(q0) is str or \
@@ -25,11 +30,8 @@ class Automata:
              not states.issuperset(final_states) or \
              not q0 in states:
             return False
-        # TODO: meaning
-            # intersection alphabet and states == empty
-            # dont make next two lines, just comment
-            # doubt: alphabet
-            # doubt: transitions
+        elif alphabet.intersection(states):
+            return False
 
         return True
 
