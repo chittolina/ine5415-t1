@@ -13,7 +13,20 @@ class Automata:
             raise ValueError('Invalid input to create an automata.')
 
     def _validate(self, alphabet, states, q0, final_states, transitions):
-        pass
+        if not type(alphabet) is set or \
+            not type(states) is set or \
+            not type(q0) is str or \
+            not type(final_states) is set or \
+            not type(transitions) is dict:
+           return False
+        # TODO: size
+        # TODO: meaning
+            # q0 and final states in states
+            # intersection alphabet and states == empty
+            # doubt: alphabet
+            # doubt: transitions
+
+        return True
 
     # TODO: check local and parameter
     def read_from_json(self):
