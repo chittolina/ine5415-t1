@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import json
 
 class Automata:
 
@@ -6,7 +7,7 @@ class Automata:
         if self._validate(alphabet, states, q0, final_states, transitions):
             self.alphabet = alphabet # type is a set of string
             self.states = states # type is a set of string
-            self.qo = q0 # type is a string
+            self.q0 = q0 # type is a string
             self.final_states = final_states # type is a set of string
             self.transitions = transitions # type is a dict(namedtuple(state, alphabet): state)
         else:
@@ -40,4 +41,6 @@ class Automata:
         pass
 
     def create_json(self):
-        pass
+        tmp = {self.q0: self.q0}
+        with open('test.json', 'w') as write_file:
+            json.dump(tmp, write_file)
