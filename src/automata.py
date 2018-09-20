@@ -14,15 +14,20 @@ class Automata:
 
     def _validate(self, alphabet, states, q0, final_states, transitions):
         if not type(alphabet) is set or \
-            not type(states) is set or \
-            not type(q0) is str or \
-            not type(final_states) is set or \
-            not type(transitions) is dict:
-           return False
-        # TODO: size
+           not type(states) is set or \
+           not type(q0) is str or \
+           not type(final_states) is set or \
+           not type(transitions) is dict:
+            return False
+        elif not alphabet or not states or not final_states or not transitions:
+            return False
+        elif not final_states.issubset(states) or \
+             not states.issuperset(final_states) or \
+             not q0 in states:
+            return False
         # TODO: meaning
-            # q0 and final states in states
             # intersection alphabet and states == empty
+            # dont make next two lines, just comment
             # doubt: alphabet
             # doubt: transitions
 
