@@ -9,7 +9,7 @@ class Automata:
             self.states = states # type is a set of string
             self.q0 = q0 # type is a string
             self.final_states = final_states # type is a set of string
-            self.transitions = transitions # type is a dict(namedtuple(state, alphabet): state)
+            self.transitions = transitions # type is a dict(namedtuple(state, alphabet): set(state))
         else:
             raise ValueError('Invalid input to create an automata.')
 
@@ -36,11 +36,23 @@ class Automata:
 
         return True
 
-    # TODO: check local and parameter
-    def read_from_json(self):
-        pass
+    def save_json(self, filename):
+        data = {}
+        data['alphabet'] = list(self.alphabet)
+        data['states'] = list(self.states)
+        data['q0'] = self.q0
+        data['final_states'] = list(self.final_states)
+        data['transitions'] = [(k[0], k[1], list(v)) for k, v in self.transitions.items()]
 
-    def create_json(self):
-        tmp = {self.q0: self.q0}
-        with open('test.json', 'w') as write_file:
-            json.dump(tmp, write_file)
+        with open(filename + '.json', 'w') as write_file:
+            json.dump(data, write_file, indent=4)
+
+    @staticmethod
+    def read_from_json(filename):
+        # TODO: create a data folder inside tests that will have json file
+        # TODO: create test that use json file from last line
+
+        with open(filename, 'r') as load_file:
+            data = json.load(load_file)
+
+        # TODO: split data in vars to return init from automata

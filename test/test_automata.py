@@ -1,11 +1,11 @@
 import unittest
+import os
 from collections import namedtuple
 from src.automata import Automata
 
 class AutomataTests(unittest.TestCase):
     def test_alright(self):
-        transitions = self._create_transitions()
-        fa = Automata({'a', 'b'}, {'A', 'B'}, 'A', {'B'}, transitions)
+        fa = self._create_automata()
         self.assertIsInstance(fa, Automata)
 
     def test_type_check(self):
@@ -22,12 +22,24 @@ class AutomataTests(unittest.TestCase):
         transitions = self._create_transitions()
         self.assertRaises(ValueError, Automata, {'a'}, {'A', 'B', 'a'}, 'A', {'B'}, transitions)
 
+    def test_save_json(self):
+        fa = self._create_automata()
+        filename = 'test_save_json'
+        fa.save_json(filename)
+        # clean the disk
+        os.remove(filename + '.json')
+
+    def _create_automata(self):
+        """Helper that create and return a default automata."""
+        transitions = self._create_transitions()
+        return Automata({'a', 'b'}, {'A', 'B'}, 'A', {'B'}, transitions)
+
     def _create_transitions(self):
         """Helper that create and return a default transitions."""
         transitions = {}
         Transition = namedtuple('Transition', ['state', 'char'])
         t0 = Transition('A', 'a')
-        transitions[t0] = 'B'
+        transitions[t0] = set('B')
         return transitions
 
 if __name__ == '__main__':
