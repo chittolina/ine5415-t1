@@ -1,5 +1,16 @@
 # -*- coding: utf-8 -*-
 
+'''
+GLC:
+<regex>     ::= <term>
+                <term> '|' <regex>
+<term>      ::=  { <factor> }
+<factor>    ::= <base> { '*' }
+                <base> { '?' }
+<base>      ::= <char>
+                '(' <regex> ')'
+
+'''
 class Regex:
     END = '#'
     OPERATORS = ['|', '*', '.', '?']
