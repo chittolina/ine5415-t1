@@ -2,7 +2,7 @@
 
 class Regex:
     END = '#'
-    OPERATORS = ['|', '*', '+', '.', '?']
+    OPERATORS = ['|', '*', '.', '?']
 
     def __init__(self, input):
         if self._validate(input):
