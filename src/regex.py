@@ -22,6 +22,9 @@ class Regex:
 
         self.input = self.input[1:]
 
+    def _more(self):
+        return len(self.input) > 0
+
     def _next(self):
         char = _peek()
         _eat(char)
