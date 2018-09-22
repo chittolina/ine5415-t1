@@ -11,10 +11,6 @@ class Regex:
             raise ValueError('Invalid input string.')
 
     def _validate(self, input):
-        for c in input:
-            if c not in self.OPERATORS:
-                return False
-
         return True
 
     def _peek(self):
@@ -29,3 +25,5 @@ class Regex:
     def _next(self):
         _eat(_peek())
         return char
+
+    def _regex(self):
