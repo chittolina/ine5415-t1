@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
 class Regex:
-    OPERATORS = ['|', '*', '+', '.', '(', ')', '^']
+    END = '#'
+    OPERATORS = ['|', '*', '+', '.', '?']
 
     def __init__(self, string):
         if self._validate(string):
