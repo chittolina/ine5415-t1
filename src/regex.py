@@ -23,7 +23,8 @@ class Regex:
         self.input = self.input[1:]
 
     def _next(self):
-        _eat(_peek())
+        char = _peek()
+        _eat(char)
         return char
 
     def _regex(self):
