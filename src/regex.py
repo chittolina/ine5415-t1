@@ -19,7 +19,7 @@ class Regex:
         if self._validate(input):
             self.input = input
         else:
-            raise ValueError('Invalid input string.')
+            raise RuntimeError('Invalid input string.')
 
     def _validate(self, input):
         return True
