@@ -3,6 +3,8 @@ First college work from INE5421.
 
 ## Tests
 
+Execution at project top-level folder.
+
 Run all tests:
 
 ```python -m unittest discover```

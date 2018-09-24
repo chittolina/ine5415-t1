@@ -29,6 +29,10 @@ class AutomataTests(unittest.TestCase):
         # clean the disk
         os.remove(filename + '.json')
 
+    def test_read_json(self):
+        fa = Automata.read_from_json('./test/data/test_read_json')
+        self.assertIsInstance(fa, Automata)
+
     def _create_automata(self):
         """Helper that create and return a default automata."""
         transitions = self._create_transitions()

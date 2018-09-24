@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import json
+from collections import namedtuple
 
 class Automata:
 
@@ -49,10 +50,20 @@ class Automata:
 
     @staticmethod
     def read_from_json(filename):
-        # TODO: create a data folder inside tests that will have json file
-        # TODO: create test that use json file from last line
-
-        with open(filename, 'r') as load_file:
+        with open(filename + '.json', 'r') as load_file:
             data = json.load(load_file)
 
-        # TODO: split data in vars to return init from automata
+        # XXX: str come as unicode from json
+        alphabet = set(data['alphabet'])
+        states = set(data['states'])
+        q0 = str(data['q0'])
+        final_states = set(data['final_states'])
+
+        # TODO: maybe make next lines a static method
+        transitions = {}
+        Transition = namedtuple('Transition', ['state', 'char'])
+        for l in data['transitions']:
+            t = Transition(l[0], l[1])
+            transitions[t] = set(l[2])
+
+        return Automata(alphabet, states, q0, final_states, transitions)
