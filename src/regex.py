@@ -43,7 +43,7 @@ class RegexParser:
         return self.input[0]
 
     def _eat(self, char):
-        if self._peek() != char
+        if self._peek() != char:
             raise RuntimeError('Invalid input string.')
 
         self.input = self.input[1:]

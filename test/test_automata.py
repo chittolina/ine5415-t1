@@ -3,6 +3,7 @@ import os
 from collections import namedtuple
 from src.automata import Automata
 
+
 class AutomataTests(unittest.TestCase):
     def test_alright(self):
         fa = self._create_automata()
@@ -12,15 +13,18 @@ class AutomataTests(unittest.TestCase):
         self.assertRaises(ValueError, Automata, '', '', 1, '', '')
 
     def test_size_check(self):
-        self.assertRaises(ValueError, Automata, set(), set(), 'a', set(), dict())
+        self.assertRaises(ValueError, Automata,
+                          set(), set(), 'a', set(), dict())
 
     def test_set_check(self):
         transitions = self._create_transitions()
-        self.assertRaises(ValueError, Automata, {'a'}, {'A', 'B'}, 'C', {'B', 'D'} , transitions)
+        self.assertRaises(ValueError, Automata,
+                          {'a'}, {'A', 'B'}, 'C', {'B', 'D'}, transitions)
 
     def test_basic_alphabet(self):
         transitions = self._create_transitions()
-        self.assertRaises(ValueError, Automata, {'a'}, {'A', 'B', 'a'}, 'A', {'B'}, transitions)
+        self.assertRaises(ValueError, Automata,
+                          {'a'}, {'A', 'B', 'a'}, 'A', {'B'}, transitions)
 
     def test_save_json(self):
         fa = self._create_automata()
