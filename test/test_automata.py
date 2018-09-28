@@ -33,18 +33,20 @@ class AutomataTests(unittest.TestCase):
         # clean the disk
         os.remove(filename + '.json')
 
-    def test_e_closure_empty(self):
-        pass
-
-    def test_e_closure_book_example(self):
-        pass
-
-    def test_e_closure_simple_example(self):
-        pass
-
     def test_read_json(self):
         fa = Automata.read_from_json('./test/data/test_read_json')
         self.assertIsInstance(fa, Automata)
+
+    def test_e_closure_empty(self):
+        fa = self._create_automata()
+        self.assertSetEqual(set(fa.q0), fa._e_closure([fa.q0]))
+
+    def test_e_closure_book_example(self):
+        fa = Automata.read_from_json('./test/data/test_e_closure_book_example')
+        self.assertSetEqual({'0', '1', '2', '4', '7'}, fa._e_closure([fa.q0]))
+
+    def test_e_closure_simple_example(self):
+        pass
 
     def _create_automata(self):
         """Helper that create and return a default automata."""

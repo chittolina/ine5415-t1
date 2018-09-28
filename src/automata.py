@@ -70,18 +70,23 @@ class Automata:
 
         Set of NFA states reachable from some NFA state s in set states on
         e-transitions alone.
+
+        Parameter states type is a list.
         """
         stack = states
         e_closure = states
-        while not stack:
+        while stack:
             top_state = stack.pop()
-            transition = Utils.TRANSITION(top_state, '&')
+            transition = Utils.TRANSITION(top_state, '&')  # TODO: colocar utils
+            # avoid KeyError with state without transition by &
+            # TODO: think if this check broke the algorithm
+            # if transition in self.transitions:
             for state in self.transitions[transition]:
                 if state not in e_closure:
                     e_closure.append(state)
                     stack.append(state)
 
-        return e_closure
+        return set(e_closure)
 
     @staticmethod
     def read_from_json(filename):
