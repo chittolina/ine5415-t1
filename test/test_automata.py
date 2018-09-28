@@ -1,7 +1,7 @@
 import unittest
 import os
-from collections import namedtuple
 from src.automata import Automata
+from src.utils_automata import Utils
 
 
 class AutomataTests(unittest.TestCase):
@@ -33,6 +33,15 @@ class AutomataTests(unittest.TestCase):
         # clean the disk
         os.remove(filename + '.json')
 
+    def test_e_closure_empty(self):
+        pass
+
+    def test_e_closure_book_example(self):
+        pass
+
+    def test_e_closure_simple_example(self):
+        pass
+
     def test_read_json(self):
         fa = Automata.read_from_json('./test/data/test_read_json')
         self.assertIsInstance(fa, Automata)
@@ -45,8 +54,7 @@ class AutomataTests(unittest.TestCase):
     def _create_transitions(self):
         """Helper that create and return a default transitions."""
         transitions = {}
-        Transition = namedtuple('Transition', ['state', 'char'])
-        t0 = Transition('A', 'a')
+        t0 = Utils.TRANSITION('A', 'a')
         transitions[t0] = set('B')
         return transitions
 

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import json
 from collections import namedtuple
+from .utils_automata import Utils
 
 
 class Automata:
@@ -54,6 +55,34 @@ class Automata:
         with open(filename + '.json', 'w') as write_file:
             json.dump(data, write_file, indent=4)
 
+    def nfa_to_dfa(self):
+        """Conversion of an NFA to a DFA
+
+        Use the technique known as 'the subset construction'.
+        """
+        # lembrar de testar aqui
+        # Dstates = e_closure(so)
+        # conferir com anotações
+        pass
+
+    def _e_closure(self, states):
+        """Return e-closure of states parameter
+
+        Set of NFA states reachable from some NFA state s in set states on
+        e-transitions alone.
+        """
+        stack = states
+        e_closure = states
+        while not stack:
+            top_state = stack.pop()
+            transition = Utils.TRANSITION(top_state, '&')
+            for state in self.transitions[transition]:
+                if state not in e_closure:
+                    e_closure.append(state)
+                    stack.append(state)
+
+        return e_closure
+
     @staticmethod
     def read_from_json(filename):
         with open(filename + '.json', 'r') as load_file:
@@ -67,9 +96,8 @@ class Automata:
 
         # TODO: maybe make next lines a static method
         transitions = {}
-        Transition = namedtuple('Transition', ['state', 'char'])
         for l in data['transitions']:
-            t = Transition(l[0], l[1])
+            t = Utils.TRANSITION(l[0], l[1])
             transitions[t] = set(l[2])
 
         return Automata(alphabet, states, q0, final_states, transitions)
