@@ -46,7 +46,11 @@ class AutomataTests(unittest.TestCase):
         self.assertSetEqual({'0', '1', '2', '4', '7'}, fa._e_closure([fa.q0]))
 
     def test_e_closure_simple_example(self):
-        pass
+        t0 = Utils.TRANSITION('q0', Utils.EPSILON)
+        t1 = Utils.TRANSITION('q1', '0')
+        transitions = {t0: {'q1'}, t1: {'q2'}}
+        fa = Automata({'0'}, {'q0', 'q1', 'q2'}, 'q0', {'q2'}, transitions)
+        self.assertSetEqual({'q0', 'q1'}, fa._e_closure([fa.q0]))
 
     def _create_automata(self):
         """Helper that create and return a default automata."""
