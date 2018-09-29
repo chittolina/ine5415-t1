@@ -60,10 +60,24 @@ class Automata:
 
         Use the technique known as 'the subset construction'.
         """
-        # lembrar de testar aqui
-        # Dstates = e_closure(so)
-        # conferir com anotações
-        pass
+        # TODO: lembrar de testar aqui
+        # TODO: conferir com anotações
+        # TODO: pensar sobre como retornar isso, provavelmente uma nova inst.
+
+        new_states = {self._e_closure([self.q0]): False}
+        new_transitions = {}
+
+        for k, v in new_states.items():
+            if not v:
+                new_states[k] = True
+
+                for char in self.alphabet:
+                    new_state = self._e_closure(self._move(k, char))
+
+                    if new_state not in new_states:
+                        new_states[new_state] = False
+
+                    new_transitions[Utils.TRANSITION(k, char)] = new_state
 
     def _e_closure(self, states):
         """Return e-closure of states parameter
@@ -88,18 +102,22 @@ class Automata:
 
         return {s for s in e_closure}
 
+    def _move(self, state, char_input):
+        # TODO: testar isso separadamente
+        # TODO: comentar
+        pass
+
     @staticmethod
     def read_from_json(filename):
+        # str come as unicode from json
         with open(filename + '.json', 'r') as load_file:
             data = json.load(load_file)
 
-        # XXX: str come as unicode from json
         alphabet = set(data['alphabet'])
         states = set(data['states'])
         q0 = str(data['q0'])
         final_states = set(data['final_states'])
 
-        # TODO: maybe make next lines a static method
         transitions = {}
         for l in data['transitions']:
             t = Utils.TRANSITION(l[0], l[1])
