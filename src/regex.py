@@ -77,7 +77,7 @@ class RegexParser:
         base = self._base()
         char = self._peek()
 
-        while self._more() and self._peek() in ['?', '*']:
+        while self._more() and self._peek() in ['?', '*', '.']:
             self._eat(self._peek())
 
         return base
@@ -87,5 +87,6 @@ class RegexParser:
 
         if self._peek() in ['|', ')']:
             node = Node('.', factor, self._term())
+            return node
 
         return factor
