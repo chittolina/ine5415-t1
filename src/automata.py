@@ -7,7 +7,6 @@ from .utils_automata import Utils
 class Automata:
 
     def __init__(self, alphabet, states, q0, final_states, transitions):
-        # TODO: check types inner sets
         if self._validate(alphabet, states, q0, final_states, transitions):
             self.alphabet = alphabet  # type is a set of string
             self.states = states  # type is a set of string
@@ -64,6 +63,7 @@ class Automata:
         # TODO: lembrar de testar aqui
         # TODO: conferir com anotações
 
+        # start determinization process
         new_q0 = self._e_closure([self.q0])
         new_states_with_marks = {new_q0: False}
         new_transitions = {}
@@ -84,6 +84,28 @@ class Automata:
         new_final_states = {s for s in new_states
                             if not s.isdisjoint(self.final_states)}
 
+        # process is done and now its necessary 'normalizar' the new things
+        # 'normalizar' -> set of states become a string
+        for new_state in new_states:
+            i = 0
+            name = 'q' + i
+
+            new_q0 = name if new_state == new_q0 else new_q0
+
+            if new_state in new_final_states:
+                new_final_states.remove(new_state)
+                new_final_states.add(name)
+
+            for transition in new_transitions:
+                if transition[0] == new_state:
+                    new_transitions[Utils.TRANSITION(name, transition[1])] = \
+                        new_transitions[transition]
+                    del new_transitions[transition]
+
+            new_state = name
+            i += 1
+
+        # all done, just return a new Automata
         return Automata(self.alphabet, new_states,
                         new_q0, new_final_states, new_transitions)
 
