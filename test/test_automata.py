@@ -70,6 +70,18 @@ class AutomataTests(unittest.TestCase):
         fa = Automata({'a'}, {'0', '1', '2'}, '0', {'1'}, transitions)
         self.assertSetEqual({'1', '2'}, fa._move({'2'}, 'a'))
 
+    def test_nfa_to_dfa_01(self):
+        # from https://goo.gl/jHyfwd
+        # without epsilon
+        t0 = Utils.TRANSITION('q0', '0')
+        t1 = Utils.TRANSITION('q0', '1')
+        t2 = Utils.TRANSITION('q1', '0')
+        transitions = {t0: {'q0'}, t1: {'q0', 'q1'}, t2: {'q2'}}
+        nfa = Automata({'0', '1'}, {'q0', 'q1', 'q2'}, 'q0', {'q2'},
+                       transitions)
+        dfa = nfa.nfa_to_dfa()
+        self.assertEqual(3, len(dfa.states))
+
     def _create_automata(self):
         """Helper that create and return a default automata."""
         transitions = self._create_transitions()

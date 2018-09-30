@@ -60,35 +60,38 @@ class Automata:
 
         Use the technique known as 'the subset construction'.
         """
-        # TODO: lembrar de testar aqui
         # TODO: conferir com anotações
 
         # start determinization process
         new_q0 = self._e_closure([self.q0])
-        new_states_with_marks = {new_q0: False}
+        new_states_with_marks = [(frozenset(new_q0), False)]
         new_transitions = {}
 
-        for k, v in new_states_with_marks.items():
-            if not v:
-                new_states_with_marks[k] = True
+        for i in new_states_with_marks:
+            if not i[1]:
+                new_states_with_marks.remove(i)
+                new_states_with_marks.append((i[0], True))
 
                 for char in self.alphabet:
-                    new_state = self._e_closure(self._move(k, char))
+                    new_state = \
+                        frozenset(self._e_closure(self._move(i[0], char)))
 
-                    if new_state not in new_states_with_marks:
-                        new_states_with_marks[new_state] = False
+                    if (new_state, True) not in new_states_with_marks and \
+                       (new_state, False) not in new_states_with_marks:
+                        new_states_with_marks.append((new_state, False))
 
-                    new_transitions[Utils.TRANSITION(k, char)] = new_state
+                    new_transitions[Utils.TRANSITION(i[0], char)] = new_state
 
-        new_states = {keys for keys in new_states_with_marks}
+        new_states = {i[0] for i in new_states_with_marks}
         new_final_states = {s for s in new_states
                             if not s.isdisjoint(self.final_states)}
 
         # process is done and now its necessary 'normalizar' the new things
         # 'normalizar' -> set of states become a string
+        tmp_dict = {}
         for new_state in new_states:
             i = 0
-            name = 'q' + i
+            name = 'q' + str(i)
 
             new_q0 = name if new_state == new_q0 else new_q0
 
@@ -98,12 +101,15 @@ class Automata:
 
             for transition in new_transitions:
                 if transition[0] == new_state:
-                    new_transitions[Utils.TRANSITION(name, transition[1])] = \
+                    # FIXME: problem in assignment, maybe create a dict
+                    tmp_dict[Utils.TRANSITION(name, transition[1])] = \
                         new_transitions[transition]
-                    del new_transitions[transition]
 
             new_state = name
             i += 1
+
+        new_transitions = tmp_dict
+        # FIXME: dont use more frozenset
 
         # all done, just return a new Automata
         return Automata(self.alphabet, new_states,
