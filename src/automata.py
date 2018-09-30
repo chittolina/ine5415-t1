@@ -7,6 +7,7 @@ from .utils_automata import Utils
 class Automata:
 
     def __init__(self, alphabet, states, q0, final_states, transitions):
+        # TODO: check types inner sets
         if self._validate(alphabet, states, q0, final_states, transitions):
             self.alphabet = alphabet  # type is a set of string
             self.states = states  # type is a set of string
@@ -62,22 +63,29 @@ class Automata:
         """
         # TODO: lembrar de testar aqui
         # TODO: conferir com anotações
-        # TODO: pensar sobre como retornar isso, provavelmente uma nova inst.
 
-        new_states = {self._e_closure([self.q0]): False}
+        new_q0 = self._e_closure([self.q0])
+        new_states_with_marks = {new_q0: False}
         new_transitions = {}
 
-        for k, v in new_states.items():
+        for k, v in new_states_with_marks.items():
             if not v:
-                new_states[k] = True
+                new_states_with_marks[k] = True
 
                 for char in self.alphabet:
                     new_state = self._e_closure(self._move(k, char))
 
-                    if new_state not in new_states:
-                        new_states[new_state] = False
+                    if new_state not in new_states_with_marks:
+                        new_states_with_marks[new_state] = False
 
                     new_transitions[Utils.TRANSITION(k, char)] = new_state
+
+        new_states = {keys for keys in new_states_with_marks}
+        new_final_states = {s for s in new_states
+                            if not s.isdisjoint(self.final_states)}
+
+        return Automata(self.alphabet, new_states,
+                        new_q0, new_final_states, new_transitions)
 
     def _e_closure(self, states):
         """Return e-closure of states parameter
@@ -102,9 +110,13 @@ class Automata:
 
         return {s for s in e_closure}
 
-    def _move(self, state, char_input):
+    def _move(self, states, char):
+        """Return move result by char in states.
+
+        Set of NFA states to which there is a transition on input symbol char
+        from some state s in states.
+        """
         # TODO: testar isso separadamente
-        # TODO: comentar
         pass
 
     @staticmethod
