@@ -49,8 +49,6 @@ class RegexParser:
 
     def _eat(self, char):
         if self._peek() != char:
-            print self._peek()
-            print char
             raise RuntimeError('Invalid input string.')
 
         self.input = self.input[1:]
