@@ -87,5 +87,6 @@ class RegexParser:
 
         if self._peek() in ['|', ')']:
             node = Node('.', factor, self._term())
+            return node
 
         return factor
