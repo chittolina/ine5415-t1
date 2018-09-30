@@ -42,7 +42,8 @@ class AutomataTests(unittest.TestCase):
         self.assertSetEqual(set(fa.q0), fa._e_closure([fa.q0]))
 
     def test_e_closure_book_example(self):
-        fa = Automata.read_from_json('./test/data/test_e_closure_book_example')
+        fa = Automata.read_from_json('./test/data/' +
+                                     'test_e_closure_book_aho_example_334')
         self.assertSetEqual({'0', '1', '2', '4', '7'}, fa._e_closure([fa.q0]))
 
     def test_e_closure_simple_example(self):
@@ -51,6 +52,23 @@ class AutomataTests(unittest.TestCase):
         transitions = {t0: {'q1'}, t1: {'q2'}}
         fa = Automata({'0'}, {'q0', 'q1', 'q2'}, 'q0', {'q2'}, transitions)
         self.assertSetEqual({'q0', 'q1'}, fa._e_closure([fa.q0]))
+
+    def test_move_empty(self):
+        fa = self._create_automata()
+        self.assertSetEqual(set(), fa._move({'B'}, 'a'))
+
+    def test_move_book_example(self):
+        fa = Automata.read_from_json('./test/data/' +
+                                     'test_e_closure_book_aho_example_334')
+        self.assertSetEqual({'3'}, fa._move({'0', '1', '2', '4'}, 'a'))
+
+    def test_move_simple_example(self):
+        t0 = Utils.TRANSITION('0', Utils.EPSILON)
+        t1 = Utils.TRANSITION('1', Utils.EPSILON)
+        t2 = Utils.TRANSITION('2', 'a')
+        transitions = {t0: {'1'}, t1: {'2'}, t2: {'1', '2'}}
+        fa = Automata({'a'}, {'0', '1', '2'}, '0', {'1'}, transitions)
+        self.assertSetEqual({'1', '2'}, fa._move({'2'}, 'a'))
 
     def _create_automata(self):
         """Helper that create and return a default automata."""

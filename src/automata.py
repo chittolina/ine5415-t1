@@ -116,8 +116,21 @@ class Automata:
         Set of NFA states to which there is a transition on input symbol char
         from some state s in states.
         """
-        # TODO: testar isso separadamente
-        pass
+        # TODO: maybe _move and _e_closure could be just one method
+        stack = [s for s in states]
+        result = set()
+
+        while stack:
+            top_state = stack.pop()
+            transition = Utils.TRANSITION(top_state, char)
+
+            # avoid KeyError with state without transition by epsilon
+            if transition in self.transitions:
+                for state in self.transitions[transition]:
+                    if state not in result:
+                        result.add(state)
+
+        return result
 
     @staticmethod
     def read_from_json(filename):
