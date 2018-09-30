@@ -12,6 +12,7 @@ GLC:
                 '(' <regex> ')'
 '''
 
+import re
 
 class Node:
     count = 0
@@ -26,24 +27,30 @@ class Node:
 
 END = '#'
 OPERATORS = ['|', '*', '.', '?']
-ALPHABET = ['a', 'b']
+ALPHABET = re.compile(r"([A-z0-9&])|(.)")
 
 class RegexParser:
 
     def __init__(self, input):
-        if self._validate(input):
-            self.input = input
-        else:
+        self.input = input
+        if not self._validate():
             raise RuntimeError('Invalid input string.')
 
-    def _validate(self, input):
+    def _validate(self):
+        node = self._regex()
+        self.root = node
         return True
 
     def _peek(self):
-        return self.input[0]
+        if self._more():
+            return self.input[0]
+        else:
+            return ''
 
     def _eat(self, char):
         if self._peek() != char:
+            print self._peek()
+            print char
             raise RuntimeError('Invalid input string.')
 
         self.input = self.input[1:]
@@ -57,7 +64,15 @@ class RegexParser:
         return char
 
     def _regex(self):
-        return True
+        term = self._term()
+
+        if self._peek() == '|':
+            self._next()
+            regex = self._regex()
+            node = Node('|', term, regex)
+            return node
+
+        return term
 
     def _base(self):
         char = self._peek()
@@ -67,8 +82,8 @@ class RegexParser:
             regex = self._regex()
             self._eat(')')
             return regex
-        elif char in ALPHABET:
-            node = Node(char, None, None)
+        elif ALPHABET.match(char):
+            node = Node(self._next(), None, None)
             return node
         else:
             raise RuntimeError('Invalid input string.')
@@ -77,16 +92,15 @@ class RegexParser:
         base = self._base()
         char = self._peek()
 
-        while self._more() and self._peek() in ['?', '*', '.']:
-            self._eat(self._peek())
+        while self._more() and self._peek() in ['?', '*']:
+            base = Node(self._next(), base, None)
 
         return base
 
     def _term(self):
         factor = self._factor()
 
-        if self._peek() in ['|', ')']:
-            node = Node('.', factor, self._term())
-            return node
+        if self._more() and self._peek() not in ['|', ')']:
+            factor = Node('.', factor, self._term())
 
         return factor
