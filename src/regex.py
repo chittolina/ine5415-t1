@@ -49,8 +49,6 @@ class RegexParser:
 
     def _eat(self, char):
         if self._peek() != char:
-            print self._peek()
-            print char
             raise RuntimeError('Invalid input string.')
 
         self.input = self.input[1:]
@@ -104,3 +102,46 @@ class RegexParser:
             factor = Node('.', factor, self._term())
 
         return factor
+
+    def _firstpos(self, node):
+        if node.symbol == '|':
+            return self._firstpos(node.left).union(self._firstpos(node.right))
+        if node.symbol == '.':
+            if self._nullable(node.left):
+                return self._firstpos(node.left).union(self._firstpos(node.right))
+            else:
+                return self._firstpos(node.left)
+        if node.symbol == '*':
+            return self._firstpos(node.left)
+
+        if self._nullable(node):
+            return set([])
+        else:
+            return set([node.index])
+
+    def _lastpos(self, node):
+        if node.symbol == '|':
+            return self._firstpos(node.right).union(self._firstpos(node.left))
+        if node.symbol == '.':
+            if self._nullable(node.right):
+                return self._firstpos(node.right).union(self._firstpos(node.left))
+            else:
+                return self._firstpos(node.right)
+        if node.symbol == '*':
+            return self._firstpos(node.right)
+
+        if self._nullable(node):
+            return set([])
+        else:
+            return set([node.index])
+
+
+    def _nullable(self, node):
+        if node.symbol == '*':
+            return True
+        if node.symbol == '|':
+            return self._nullable(node.left) or self._nullable(node.right)
+        if node.symbol == '.':
+            return self._nullable(node.left) and self._nullable(node.right)
+
+        return False
