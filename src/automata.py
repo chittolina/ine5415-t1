@@ -60,29 +60,28 @@ class Automata:
 
         Use the technique known as 'the subset construction'.
         """
-        # TODO: conferir com anotações
 
         # start determinization process
         new_q0 = frozenset(self._e_closure([self.q0]))
-        new_states_with_marks = [(new_q0, False)]
+        new_states = [new_q0]
         new_transitions = {}
 
-        for i in new_states_with_marks:
-            if not i[1]:
-                new_states_with_marks.remove(i)
-                new_states_with_marks.append((i[0], True))
+        states_to_check = 1
+        i = 0
+        while states_to_check > 0:
+            state = new_states[i]
+            states_to_check -= 1
+            i += 1
 
-                for char in self.alphabet:
-                    new_state = \
-                        frozenset(self._e_closure(self._move(i[0], char)))
+            for char in self.alphabet:
+                new_state = frozenset(self._e_closure(self._move(state, char)))
 
-                    if (new_state, True) not in new_states_with_marks and \
-                       (new_state, False) not in new_states_with_marks:
-                        new_states_with_marks.append((new_state, False))
+                if new_state not in new_states:
+                    new_states.append(new_state)
+                    states_to_check += 1
 
-                    new_transitions[Utils.TRANSITION(i[0], char)] = new_state
+                new_transitions[Utils.TRANSITION(state, char)] = new_state
 
-        new_states = {i[0] for i in new_states_with_marks}
         new_final_states = {s for s in new_states
                             if not s.isdisjoint(self.final_states)}
 

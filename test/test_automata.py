@@ -99,6 +99,49 @@ class AutomataTests(unittest.TestCase):
         self.assertEqual(10, len(dfa.transitions))
         # TODO: test with method that check if is a dfa
 
+    def test_nfa_to_dfa_03(self):
+        # from https://goo.gl/Qk8GSk
+        # without epsilon
+        t0 = Utils.TRANSITION('A', '0')
+        t1 = Utils.TRANSITION('A', '1')
+        transitions = {t0: {'A'}, t1: {'A', 'B'}}
+        nfa = Automata({'0', '1'}, {'A', 'B'}, 'A', {'B'}, transitions)
+        dfa = nfa.to_dfa()
+        # transition by transition was checked by hand with print :|
+        # cannot check transition by transition because of the randomness
+        self.assertEqual(2, len(dfa.states))
+        self.assertEqual(1, len(dfa.final_states))
+        self.assertEqual(4, len(dfa.transitions))
+        # TODO: test with method that check if is a dfa
+
+    def test_nfa_to_dfa_04(self):
+        # from https://goo.gl/fFZp7b
+        # without epsilon
+        t0 = Utils.TRANSITION('A', '0')
+        t1 = Utils.TRANSITION('A', '1')
+        t2 = Utils.TRANSITION('B', '1')
+        transitions = {t0: {'A', 'B'}, t1: {'A'}, t2: {'C'}}
+        nfa = Automata({'0', '1'}, {'A', 'B', 'C'}, 'A', {'C'}, transitions)
+        dfa = nfa.to_dfa()
+        # transition by transition was checked by hand with print :|
+        # cannot check transition by transition because of the randomness
+        self.assertEqual(3, len(dfa.states))
+        self.assertEqual(1, len(dfa.final_states))
+        self.assertEqual(6, len(dfa.transitions))
+        # TODO: test with method that check if is a dfa
+
+    def test_nfa_to_dfa_05(self):
+        # from https://goo.gl/Ymsc8D
+        # with epsilon
+        nfa = Automata.read_from_json('./test/data/test_nfa_to_dfa_05')
+        dfa = nfa.to_dfa()
+        # transition by transition was checked by hand with print :|
+        # cannot check transition by transition because of the randomness
+        self.assertEqual(6, len(dfa.states))
+        self.assertEqual(2, len(dfa.final_states))
+        self.assertEqual(12, len(dfa.transitions))
+        # TODO: test with method that check if is a dfa
+
     def _create_automata(self):
         """Helper that create and return a default automata."""
         transitions = self._create_transitions()
