@@ -17,6 +17,8 @@ class Automata:
         else:
             raise ValueError('Invalid input to create an automata.')
 
+        self.deterministic = self._is_deterministic()
+
     def _validate(self, alphabet, states, q0, final_states, transitions):
         """Do validation about type, size and inner relationship.
 
@@ -55,11 +57,30 @@ class Automata:
         with open(filename + '.json', 'w') as write_file:
             json.dump(data, write_file, indent=4)
 
+    def _is_deterministic(self):
+        """Check if the automata is deterministic.
+
+        1. There are no moves on input &, and
+        2. For each state s and input symbol a, there is exactly one edge out
+        of s labeled a.
+        """
+        if len(self.transitions) != len(self.alphabet) * len(self.states):
+            return False
+
+        for k, v in self.transitions.items():
+            if k[1] == Utils.EPSILON or len(v) != 1:
+                return False
+
+        return True
+
     def to_dfa(self):
         """Conversion of an NFA to a DFA
 
         Use the technique known as 'the subset construction'.
         """
+        # TODO: when code the view, see the better way to work with this
+        if self.deterministic:
+            raise Warning('Automata is a DFA. Isnt necessary make conversion.')
 
         # start determinization process
         new_q0 = frozenset(self._e_closure([self.q0]))
@@ -102,7 +123,7 @@ class Automata:
         normal_transitions = {}
         for trans, target in new_transitions.items():
             normal_from = final_names[trans[0]]
-            normal_target = final_names[target]
+            normal_target = {final_names[target]}
             normal_transitions[Utils.TRANSITION(normal_from, trans[1])] = \
                 normal_target
 

@@ -85,7 +85,7 @@ class AutomataTests(unittest.TestCase):
         self.assertEqual(3, len(dfa.states))
         self.assertEqual(1, len(dfa.final_states))
         self.assertEqual(6, len(dfa.transitions))
-        # TODO: test with method that check if is a dfa
+        self.assertTrue(dfa._is_deterministic())
 
     def test_nfa_to_dfa_02(self):
         # from https://goo.gl/dYbXRr
@@ -97,7 +97,7 @@ class AutomataTests(unittest.TestCase):
         self.assertEqual(5, len(dfa.states))
         self.assertEqual(4, len(dfa.final_states))
         self.assertEqual(10, len(dfa.transitions))
-        # TODO: test with method that check if is a dfa
+        self.assertTrue(dfa._is_deterministic())
 
     def test_nfa_to_dfa_03(self):
         # from https://goo.gl/Qk8GSk
@@ -112,7 +112,7 @@ class AutomataTests(unittest.TestCase):
         self.assertEqual(2, len(dfa.states))
         self.assertEqual(1, len(dfa.final_states))
         self.assertEqual(4, len(dfa.transitions))
-        # TODO: test with method that check if is a dfa
+        self.assertTrue(dfa._is_deterministic())
 
     def test_nfa_to_dfa_04(self):
         # from https://goo.gl/fFZp7b
@@ -128,7 +128,7 @@ class AutomataTests(unittest.TestCase):
         self.assertEqual(3, len(dfa.states))
         self.assertEqual(1, len(dfa.final_states))
         self.assertEqual(6, len(dfa.transitions))
-        # TODO: test with method that check if is a dfa
+        self.assertTrue(dfa._is_deterministic())
 
     def test_nfa_to_dfa_05(self):
         # from https://goo.gl/Ymsc8D
@@ -140,7 +140,7 @@ class AutomataTests(unittest.TestCase):
         self.assertEqual(6, len(dfa.states))
         self.assertEqual(2, len(dfa.final_states))
         self.assertEqual(12, len(dfa.transitions))
-        # TODO: test with method that check if is a dfa
+        self.assertTrue(dfa._is_deterministic())
 
     def _create_automata(self):
         """Helper that create and return a default automata."""
