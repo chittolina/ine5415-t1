@@ -55,12 +55,12 @@ class AutomataTests(unittest.TestCase):
 
     def test_move_empty(self):
         fa = self._create_automata()
-        self.assertSetEqual(set(), fa._move({'B'}, 'a'))
+        self.assertCountEqual([], fa._move({'B'}, 'a'))
 
     def test_move_book_example(self):
         fa = Automata.read_from_json('./test/data/' +
                                      'test_e_closure_book_aho_example_334')
-        self.assertSetEqual({'3'}, fa._move({'0', '1', '2', '4'}, 'a'))
+        self.assertCountEqual(['3'], fa._move({'0', '1', '2', '4'}, 'a'))
 
     def test_move_simple_example(self):
         t0 = Utils.TRANSITION('0', Utils.EPSILON)
@@ -68,7 +68,7 @@ class AutomataTests(unittest.TestCase):
         t2 = Utils.TRANSITION('2', 'a')
         transitions = {t0: {'1'}, t1: {'2'}, t2: {'1', '2'}}
         fa = Automata({'a'}, {'0', '1', '2'}, '0', {'1'}, transitions)
-        self.assertSetEqual({'1', '2'}, fa._move({'2'}, 'a'))
+        self.assertCountEqual(['1', '2'], fa._move({'2'}, 'a'))
 
     def test_nfa_to_dfa_01(self):
         # from https://goo.gl/jHyfwd
@@ -85,6 +85,18 @@ class AutomataTests(unittest.TestCase):
         self.assertEqual(3, len(dfa.states))
         self.assertEqual(1, len(dfa.final_states))
         self.assertEqual(6, len(dfa.transitions))
+        # TODO: test with method that check if is a dfa
+
+    def test_nfa_to_dfa_02(self):
+        # from https://goo.gl/dYbXRr
+        # with epsilon
+        nfa = Automata.read_from_json('./test/data/test_nfa_to_dfa_02')
+        dfa = nfa.to_dfa()
+        # transition by transition was checked by hand with print :|
+        # cannot check transition by transition because of the randomness
+        self.assertEqual(5, len(dfa.states))
+        self.assertEqual(4, len(dfa.final_states))
+        self.assertEqual(10, len(dfa.transitions))
         # TODO: test with method that check if is a dfa
 
     def _create_automata(self):

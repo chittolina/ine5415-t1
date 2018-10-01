@@ -137,12 +137,12 @@ class Automata:
     def _move(self, states, char):
         """Return move result by char in states.
 
-        Set of NFA states to which there is a transition on input symbol char
+        List of NFA states to which there is a transition on input symbol char
         from some state s in states.
         """
         # TODO: maybe _move and _e_closure could be just one method
         stack = [s for s in states]
-        result = set()
+        result = []
 
         while stack:
             top_state = stack.pop()
@@ -152,7 +152,7 @@ class Automata:
             if transition in self.transitions:
                 for state in self.transitions[transition]:
                     if state not in result:
-                        result.add(state)
+                        result.append(state)
 
         return result
 
