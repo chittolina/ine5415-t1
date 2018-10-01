@@ -79,8 +79,13 @@ class AutomataTests(unittest.TestCase):
         transitions = {t0: {'q0'}, t1: {'q0', 'q1'}, t2: {'q2'}}
         nfa = Automata({'0', '1'}, {'q0', 'q1', 'q2'}, 'q0', {'q2'},
                        transitions)
-        dfa = nfa.nfa_to_dfa()
+        dfa = nfa.to_dfa()
+        # transition by transition was checked by hand with print :|
+        # cannot check transition by transition because of the randomness
         self.assertEqual(3, len(dfa.states))
+        self.assertEqual(1, len(dfa.final_states))
+        self.assertEqual(6, len(dfa.transitions))
+        # TODO: test with method that check if is a dfa
 
     def _create_automata(self):
         """Helper that create and return a default automata."""

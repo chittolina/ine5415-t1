@@ -55,7 +55,7 @@ class Automata:
         with open(filename + '.json', 'w') as write_file:
             json.dump(data, write_file, indent=4)
 
-    def nfa_to_dfa(self):
+    def to_dfa(self):
         """Conversion of an NFA to a DFA
 
         Use the technique known as 'the subset construction'.
@@ -63,8 +63,8 @@ class Automata:
         # TODO: conferir com anotações
 
         # start determinization process
-        new_q0 = self._e_closure([self.q0])
-        new_states_with_marks = [(frozenset(new_q0), False)]
+        new_q0 = frozenset(self._e_closure([self.q0]))
+        new_states_with_marks = [(new_q0, False)]
         new_transitions = {}
 
         for i in new_states_with_marks:
@@ -88,32 +88,28 @@ class Automata:
 
         # process is done and now its necessary 'normalizar' the new things
         # 'normalizar' -> set of states become a string
-        tmp_dict = {}
+        final_names = {}
+        normal_states = set()
+        i = 0
         for new_state in new_states:
-            i = 0
             name = 'q' + str(i)
-
-            new_q0 = name if new_state == new_q0 else new_q0
-
-            if new_state in new_final_states:
-                new_final_states.remove(new_state)
-                new_final_states.add(name)
-
-            for transition in new_transitions:
-                if transition[0] == new_state:
-                    # FIXME: problem in assignment, maybe create a dict
-                    tmp_dict[Utils.TRANSITION(name, transition[1])] = \
-                        new_transitions[transition]
-
-            new_state = name
+            final_names[new_state] = name
+            normal_states.add(name)
             i += 1
 
-        new_transitions = tmp_dict
-        # FIXME: dont use more frozenset
+        normal_q0 = final_names[new_q0]
+        normal_final_states = {final_names[s] for s in new_final_states}
+
+        normal_transitions = {}
+        for trans, target in new_transitions.items():
+            normal_from = final_names[trans[0]]
+            normal_target = final_names[target]
+            normal_transitions[Utils.TRANSITION(normal_from, trans[1])] = \
+                normal_target
 
         # all done, just return a new Automata
-        return Automata(self.alphabet, new_states,
-                        new_q0, new_final_states, new_transitions)
+        return Automata(self.alphabet, normal_states, normal_q0,
+                        normal_final_states, normal_transitions)
 
     def _e_closure(self, states):
         """Return e-closure of states parameter
