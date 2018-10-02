@@ -176,6 +176,36 @@ class Automata:
 
         return result
 
+    def minimize(self):
+        # TODO: comentar
+        # TODO: testes
+        # TODO: comparar com anotações
+
+        if not self.deterministic:
+            raise Warning('Its necessary be a DFA to make minimization.')
+
+        nonaccepting_states = self.states - self.final_states
+        partition = {self.final_states, nonaccepting_states}
+
+        while True:
+            new_partition = self._create_partitions(partition)
+            if new_partition == partition:
+                break
+            partition = new_partition
+
+        # TODO: continue with step 4
+
+    def _create_partitions(self, partition):
+        # TODO: comentar que eh um helper do minimize
+        # TODO: verificar se precisa testar separado
+
+        new_partition = set()
+        for g in partition:
+            # TODO: figure 3.64
+            pass
+
+        return new_partition
+
     @staticmethod
     def read_from_json(filename):
         # str come as unicode from json
