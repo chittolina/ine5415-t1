@@ -200,9 +200,18 @@ class Automata:
         # TODO: verificar se precisa testar separado
 
         new_partition = set()
-        for g in partition:
+        for group in partition:
+            # TODO: make better next lines
+            subgroup = set()  # elemento
+            s = group.pop()
+            subgroup.add(s)
+
+            for state in group:
+                for char in self.alphabet:
+                    self.transitions[Utils.TRANSITION(s, char)]
+                    self.transitions[Utils.TRANSITION(state, char)]
+
             # TODO: figure 3.64
-            pass
 
         return new_partition
 
