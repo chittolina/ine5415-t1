@@ -189,6 +189,7 @@ class Automata:
         if not self.deterministic:
             raise Warning('Its necessary be a DFA to make minimization.')
 
+        # start steps of minimization
         unreachable_states = self._define_unreachable()
 
         new_states = self.states - unreachable_states
@@ -197,7 +198,49 @@ class Automata:
         partition = self._merge_nondistinguishable(new_states,
                                                    new_final_states)
 
-        # TODO: continue with step 4 (?)
+        # two step was done. The next process is similar to 'normalizar'
+        # of determinization. Probably, this could be coded better
+        normal_states = set()
+        normal_final_states = set()
+        final_names = {}
+        i = 0
+        for group in partition:
+            name = 'q' + str(i)
+            i += 1
+            final_names[name] = group
+            normal_states.add(name)
+
+            if self.q0 in group:
+                normal_q0 = name
+
+            if self.final_states.intersection(group):
+                normal_final_states.add(name)
+
+        normal_transitions = {}
+        for group in partition:
+            old_source = group.pop()
+            for char in self.alphabet:
+                old_target = self.transitions[Utils.TRANSITION(old_source,
+                                                               char)]
+
+                new_source = None
+                new_target = None
+                for name, value in final_names.items():
+                    if old_source in value:
+                        new_source = name
+
+                    if old_target in value:
+                        new_target = name
+
+                    if new_source is not None and new_target is not None:
+                        break
+
+                normal_transitions[Utils.TRANSITION(new_source, char)] = \
+                    new_target
+
+        # all done, just return a new Automata
+        return Automata(self.alphabet, normal_states, normal_q0,
+                        normal_final_states, normal_transitions)
 
     def _define_unreachable(self):
         """Return unreachable states
