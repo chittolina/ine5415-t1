@@ -1,6 +1,5 @@
 import json
 
-from .automata import Automata
 from .utils import Utils
 
 class Grammar(object):
@@ -17,6 +16,7 @@ class Grammar(object):
         self._terminals = self._get_terminals()
 
     def to_automaton(self):
+        from .automata import Automata
         transitions = self._make_transitions()
         final_states = set(Utils.NEW_FINAL_STATE)
         q0 = self._initial_symbol
