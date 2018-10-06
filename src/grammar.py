@@ -1,3 +1,5 @@
+import json
+
 class Grammar(object):
 
     def __init__(self, productions, initial_symbol):
@@ -14,6 +16,16 @@ class Grammar(object):
         self._nonterminals = self._getNonterminals()
         self._terminals = self._getTerminals()
 
+    def save_json(self, filename):
+        data = {
+            'nonterminals': self._nonterminals,
+            'terminals': self._terminals,
+            'productions': self._productions,
+            'initial_symbol': self._initial_symbol
+        }
+        with open(filename + '.json', 'w') as write_file:
+            json.dump(data, write_file, indent=4)
+
     def _getNonterminals(self):
         nonterminals = set(self._initial_symbol)
         for nonterminal in self._productions.keys():
@@ -26,3 +38,8 @@ class Grammar(object):
             for production in body:
                 terminals.add(production[0])
         return list(terminals)
+
+    def read_from_json(filename):
+        with open(filename + '.json', 'r') as read_file:
+            data = json.load(read_file)
+        return Grammar(data['productions'], data['initial_symbol'])
