@@ -185,23 +185,46 @@ class Automata:
         2. Merge nondistinguishable states
         """
         # TODO: testes
-        # TODO: comparar com anotações
 
         if not self.deterministic:
             raise Warning('Its necessary be a DFA to make minimization.')
 
-        self._remove_unreachable()
-        self._merge_nondistinguishable()
+        unreachable_states = self._define_unreachable()
+
+        new_states = self.states - unreachable_states
+        new_final_states = self.final_states - unreachable_states
+
+        partition = self._merge_nondistinguishable(new_states,
+                                                   new_final_states)
 
         # TODO: continue with step 4 (?)
 
-    def _remove_unreachable(self):
-        # TODO: comentar
-        # TODO: testar separado (?)
-        pass
+    def _define_unreachable(self):
+        """Return unreachable states
 
-    def _merge_nondistinguishable(self):
-        """Merge nondistinguishable states of a DFA
+        Any state that cannot be reached from the start state, for any input.
+        """
+        # TODO: testar separado (?)
+
+        reachable_states = {self.q0}
+        new_states = {self.q0}
+
+        while True:
+            tmp = set()
+            for state in new_states:
+                for char in self.alphabet:
+                    tmp.add(self.transitions[Utils.TRANSITION(state, char)])
+
+            new_states = tmp - reachable_states
+            reachable_states = reachable_states.union(new_states)
+
+            if not new_states:
+                break
+
+        return self.states - reachable_states
+
+    def _merge_nondistinguishable(self, new_states, new_final_states):
+        """Return partition with the merge of nondistinguishable states
 
         Based on partition refinement, partiotining the DFA states into groups
         by their behavior. These groups represent equivalence classes of the
@@ -211,9 +234,12 @@ class Automata:
         """
         # TODO: testar separado (?)
 
-        nonaccepting_states = self.states - self.final_states
-        partition = {self.final_states, nonaccepting_states}
-        work_set = {self.final_states}
+        if not self.deterministic:
+            raise Warning('Its necessary be a DFA to make minimization.')
+
+        nonaccepting_states = new_states - new_final_states
+        partition = {new_final_states, nonaccepting_states}
+        work_set = {new_final_states}
 
         # TODO: debugar para ver mudancas enquanto itera
         while work_set:
@@ -246,7 +272,7 @@ class Automata:
                             else:
                                 work_set.add(relative_complement_result)
 
-        # TODO: verificar o que fazer com partition
+        return partition
 
     @staticmethod
     def read_from_json(filename):
