@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import json
 from collections import namedtuple
-from .utils_automata import Utils
+from .utils import Utils
 
 
 class Automata:
