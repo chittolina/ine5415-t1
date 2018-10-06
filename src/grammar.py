@@ -13,11 +13,11 @@ class Grammar(object):
         """
         self._initial_symbol = initial_symbol
         self._productions = set(productions)
-        self._nonterminals = self._getNonterminals()
-        self._terminals = self._getTerminals()
+        self._nonterminals = self._get_nonterminals()
+        self._terminals = self._get_terminals()
 
     def to_automaton(self):
-        transitions = self._makeTransitions()
+        transitions = self._make_transitions()
         final_states = set(Utils.NEW_FINAL_STATE)
         q0 = self._initial_symbol
         states = self._nonterminals | final_states
@@ -34,32 +34,32 @@ class Grammar(object):
         with open(filename + '.json', 'w') as write_file:
             json.dump(data, write_file, indent=4)
 
-    def _getNonterminals(self):
+    def _get_nonterminals(self):
         nonterminals = set(self._initial_symbol)
         for production in self._productions:
             nonterminals.add(production[0])
         return nonterminals
 
-    def _getTerminals(self):
+    def _get_terminals(self):
         terminals = set()
         for production in self._productions:
             terminals.add(production[1])
         return terminals
 
-    def _makeTransitions(self):
+    def _make_transitions(self):
         transitions = dict()
         for production in self._productions:
             input = Utils.TRANSITION(production[0], production[1])
-            output = self._getNextState(production)
-            self._includeTransition(transitions, input, output)
+            output = self._get_next_state(production)
+            self._include_transition(transitions, input, output)
         return transitions
 
-    def _getNextState(self, production):
+    def _get_next_state(self, production):
         if len(production) == 3:
             return production[2]
         return Utils.NEW_FINAL_STATE
 
-    def _includeTransition(self, transitions, input, output):
+    def _include_transition(self, transitions, input, output):
         if not input in transitions.keys():
             transitions[input] = list()
         transitions[input].append(output)
