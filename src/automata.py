@@ -177,43 +177,76 @@ class Automata:
         return result
 
     def minimize(self):
-        # TODO: comentar
+        """Minimize a DFA by the Hopcroft's algorithm.
+
+        Hopcroft's algorithm says that to minimize a automata it's necessary
+        just two steps:
+        1. Remove unreachable states
+        2. Merge nondistinguishable states
+        """
         # TODO: testes
         # TODO: comparar com anotações
 
         if not self.deterministic:
             raise Warning('Its necessary be a DFA to make minimization.')
 
+        self._remove_unreachable()
+        self._merge_nondistinguishable()
+
+        # TODO: continue with step 4 (?)
+
+    def _remove_unreachable(self):
+        # TODO: comentar
+        # TODO: testar separado (?)
+        pass
+
+    def _merge_nondistinguishable(self):
+        """Merge nondistinguishable states of a DFA
+
+        Based on partition refinement, partiotining the DFA states into groups
+        by their behavior. These groups represent equivalence classes of the
+        Myhill–Nerode equivalence relation, whereby every two states of the
+        same partition are equivalent if they have the same behavior for all
+        the input sequences.
+        """
+        # TODO: testar separado (?)
+
         nonaccepting_states = self.states - self.final_states
         partition = {self.final_states, nonaccepting_states}
+        work_set = {self.final_states}
 
-        while True:
-            new_partition = self._create_partitions(partition)
-            if new_partition == partition:
-                break
-            partition = new_partition
+        # TODO: debugar para ver mudancas enquanto itera
+        while work_set:
+            group = work_set.pop()
+            for char in self.alphabet:
+                # create a set of states for which a transition on char leads
+                # to a state in group
+                sources = set()
+                for k, v in self.transitions.items():
+                    if k[1] == char and v in group:
+                        sources.add(k[0])
 
-        # TODO: continue with step 4
+                # TODO: debugar para ver mudancas enquanto itera
+                for item in partition:
+                    intersection_result = sources.intersection(item)
+                    relative_complement_result = item - sources
+                    if intersection_result and relative_complement_result:
+                        partition.remove(item)
+                        partition.add(intersection_result)
+                        partition.add(relative_complement_result)
 
-    def _create_partitions(self, partition):
-        # TODO: comentar que eh um helper do minimize
-        # TODO: verificar se precisa testar separado
+                        if item in work_set:
+                            work_set.remove(item)
+                            work_set.add(intersection_result)
+                            work_set.add(relative_complement_result)
+                        else:
+                            if len(intersection_result) <= \
+                               len(relative_complement_result):
+                                work_set.add(intersection_result)
+                            else:
+                                work_set.add(relative_complement_result)
 
-        new_partition = set()
-        for group in partition:
-            # TODO: make better next lines
-            subgroup = set()  # elemento
-            s = group.pop()
-            subgroup.add(s)
-
-            for state in group:
-                for char in self.alphabet:
-                    self.transitions[Utils.TRANSITION(s, char)]
-                    self.transitions[Utils.TRANSITION(state, char)]
-
-            # TODO: figure 3.64
-
-        return new_partition
+        # TODO: verificar o que fazer com partition
 
     @staticmethod
     def read_from_json(filename):
