@@ -1,6 +1,7 @@
 import json
 
-from automata import Automata, Utils
+from .automata import Automata
+from .utils import Utils
 
 class Grammar(object):
 
@@ -17,7 +18,7 @@ class Grammar(object):
 
     def to_automaton(self):
         transitions = self._makeTransitions()
-        final_states = set(FINAL_STATE)
+        final_states = set(Utils.NEW_FINAL_STATE)
         q0 = self._initial_symbol
         states = self._nonterminals | final_states
         alphabet = self._terminals
@@ -56,7 +57,7 @@ class Grammar(object):
     def _getNextState(self, production):
         if len(production) == 3:
             return production[2]
-        return FINAL_STATE
+        return Utils.NEW_FINAL_STATE
 
     def _includeTransition(self, transitions, input, output):
         if not input in transitions.keys():
