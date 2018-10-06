@@ -62,7 +62,7 @@ class Grammar(object):
     def _includeTransition(self, transitions, input, output):
         if not input in transitions.keys():
             transitions[input] = list()
-        transitions[input] = output
+        transitions[input].append(output)
 
     def read_from_json(filename):
         with open(filename + '.json', 'r') as read_file:
