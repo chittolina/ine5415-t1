@@ -38,12 +38,15 @@ class Grammar(object):
         nonterminals = set(self._initial_symbol)
         for production in self._productions:
             nonterminals.add(production[0])
+            if len(production) == 3:
+                nonterminals.add(production[2])
         return nonterminals
 
     def _get_terminals(self):
         terminals = set()
         for production in self._productions:
-            terminals.add(production[1])
+            if production[1] != Utils.EPSILON:
+                terminals.add(production[1])
         return terminals
 
     def _make_transitions(self):
