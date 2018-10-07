@@ -285,46 +285,42 @@ class Automata:
         same partition are equivalent if they have the same behavior for all
         the input sequences.
         """
-        # TODO: testar separado (?)
-
         if not self.deterministic:
             raise Warning('Its necessary be a DFA to merge nondistinguishable'
                           ' states.')
 
         nonaccepting_states = new_states - new_final_states
-        partition = {new_final_states, nonaccepting_states}
-        work_set = {new_final_states}
+        partition = [new_final_states, nonaccepting_states]
+        work_list = [new_final_states]
 
-        # TODO: debugar para ver mudancas enquanto itera
-        while work_set:
-            group = work_set.pop()
+        while work_list:
+            group = work_list.pop()
             for char in self.alphabet:
                 # create a set of states for which a transition on char leads
                 # to a state in group
                 sources = set()
                 for k, v in self.transitions.items():
-                    if k[1] == char and v in group:
+                    if k[1] == char and v.intersection(group):
                         sources.add(k[0])
 
-                # TODO: debugar para ver mudancas enquanto itera
                 for item in partition:
                     intersection_result = sources.intersection(item)
                     relative_complement_result = item - sources
                     if intersection_result and relative_complement_result:
                         partition.remove(item)
-                        partition.add(intersection_result)
-                        partition.add(relative_complement_result)
+                        partition.append(intersection_result)
+                        partition.append(relative_complement_result)
 
-                        if item in work_set:
-                            work_set.remove(item)
-                            work_set.add(intersection_result)
-                            work_set.add(relative_complement_result)
+                        if item in work_list:
+                            work_list.remove(item)
+                            work_list.append(intersection_result)
+                            work_list.append(relative_complement_result)
                         else:
                             if len(intersection_result) <= \
                                len(relative_complement_result):
-                                work_set.add(intersection_result)
+                                work_list.append(intersection_result)
                             else:
-                                work_set.add(relative_complement_result)
+                                work_list.append(relative_complement_result)
 
         return partition
 

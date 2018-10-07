@@ -156,6 +156,25 @@ class AutomataTests(unittest.TestCase):
         unreachable = dfa._define_unreachable()
         self.assertSetEqual({'q2', 'q3', 'q4'}, unreachable)
 
+    def test_merge_nondistinguishable_with_few_state(self):
+        transitions = {Utils.TRANSITION('A', '0'): {'B'},
+                       Utils.TRANSITION('A', '1'): {'C'},
+                       Utils.TRANSITION('B', '0'): {'A'},
+                       Utils.TRANSITION('B', '1'): {'B'},
+                       Utils.TRANSITION('C', '0'): {'A'},
+                       Utils.TRANSITION('C', '1'): {'A'}}
+        dfa = Automata({'0', '1'}, {'A', 'B', 'C'}, 'A', {'B', 'C'},
+                       transitions)
+        result = dfa._merge_nondistinguishable(dfa.states, dfa.final_states)
+        self.assertCountEqual([{'A'}, {'B'}, {'C'}], result)
+
+    def test_merge_nondistinguishable_from_class(self):
+        dfa = Automata.read_from_json('./test/data/'
+                                      'test_merge_nondistinguishable')
+        result = dfa._merge_nondistinguishable(dfa.states, dfa.final_states)
+        self.assertCountEqual([{'PA'}, {'PC', 'IC'}, {'PB', 'IB'}, {'IA'},
+                               {'T'}], result)
+
     def _create_automata(self):
         """Helper that create and return a default automata."""
         transitions = self._create_transitions()
