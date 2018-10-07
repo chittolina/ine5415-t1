@@ -247,7 +247,12 @@ class Automata:
 
         Any state that cannot be reached from the start state, for any input.
         """
-        # TODO: testar separado (?)
+        # today this method is only used in minimization, so the next check
+        # is a little verbose. On the other hand, the algorithm has an
+        # adaptation that make him fail if applied in a NFA
+        if not self.deterministic:
+            raise Warning('Its necessary be a DFA to define unreachable'
+                          ' states.')
 
         reachable_states = {self.q0}
         new_states = {self.q0}
@@ -256,7 +261,12 @@ class Automata:
             tmp = set()
             for state in new_states:
                 for char in self.alphabet:
-                    tmp.add(self.transitions[Utils.TRANSITION(state, char)])
+                    # only works because its a DFA
+                    # solution to the problem of add a set inside other set
+                    set_of_target = self.transitions[Utils.TRANSITION(state,
+                                                                      char)]
+                    state = set_of_target.pop()
+                    tmp.add(state)
 
             new_states = tmp - reachable_states
             reachable_states = reachable_states.union(new_states)
@@ -278,7 +288,8 @@ class Automata:
         # TODO: testar separado (?)
 
         if not self.deterministic:
-            raise Warning('Its necessary be a DFA to make minimization.')
+            raise Warning('Its necessary be a DFA to merge nondistinguishable'
+                          ' states.')
 
         nonaccepting_states = new_states - new_final_states
         partition = {new_final_states, nonaccepting_states}

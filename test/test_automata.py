@@ -144,6 +144,18 @@ class AutomataTests(unittest.TestCase):
         self.assertEqual(12, len(dfa.transitions))
         self.assertTrue(dfa.deterministic)
 
+    def test_define_unreachable_with_few_state(self):
+        transitions = {Utils.TRANSITION('A', '0'): {'A'},
+                       Utils.TRANSITION('B', '0'): {'B'}}
+        dfa = Automata({'0'}, {'A', 'B'}, 'A', {'A'}, transitions)
+        unreachable = dfa._define_unreachable()
+        self.assertSetEqual({'B'}, unreachable)
+
+    def test_define_unreachable_with_more_state(self):
+        dfa = Automata.read_from_json('./test/data/test_define_unreachable')
+        unreachable = dfa._define_unreachable()
+        self.assertSetEqual({'q2', 'q3', 'q4'}, unreachable)
+
     def _create_automata(self):
         """Helper that create and return a default automata."""
         transitions = self._create_transitions()
