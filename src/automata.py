@@ -218,7 +218,7 @@ class Automata:
 
         normal_transitions = {}
         for group in partition:
-            old_source = group.pop()
+            old_source = next(iter(group))
             for char in self.alphabet:
                 old_target = self.transitions[Utils.TRANSITION(old_source,
                                                                char)]
@@ -229,7 +229,7 @@ class Automata:
                     if old_source in value:
                         new_source = name
 
-                    if old_target in value:
+                    if old_target.intersection(value):
                         new_target = name
 
                     if new_source is not None and new_target is not None:
@@ -263,10 +263,9 @@ class Automata:
                 for char in self.alphabet:
                     # only works because its a DFA
                     # solution to the problem of add a set inside other set
-                    set_of_target = self.transitions[Utils.TRANSITION(state,
-                                                                      char)]
-                    state = set_of_target.pop()
-                    tmp.add(state)
+                    set_of_target = self.transitions[
+                        Utils.TRANSITION(state, char)].copy()
+                    tmp.add(set_of_target.pop())
 
             new_states = tmp - reachable_states
             reachable_states = reachable_states.union(new_states)

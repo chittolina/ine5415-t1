@@ -175,6 +175,36 @@ class AutomataTests(unittest.TestCase):
         self.assertCountEqual([{'PA'}, {'PC', 'IC'}, {'PB', 'IB'}, {'IA'},
                                {'T'}], result)
 
+    def test_dfa_minimization_01(self):
+        # from https://goo.gl/zN5uE3
+        transitions = {Utils.TRANSITION('a', '0'): {'b'},
+                       Utils.TRANSITION('a', '1'): {'c'},
+                       Utils.TRANSITION('b', '0'): {'a'},
+                       Utils.TRANSITION('b', '1'): {'d'},
+                       Utils.TRANSITION('c', '0'): {'e'},
+                       Utils.TRANSITION('c', '1'): {'f'},
+                       Utils.TRANSITION('d', '0'): {'e'},
+                       Utils.TRANSITION('d', '1'): {'f'},
+                       Utils.TRANSITION('e', '0'): {'e'},
+                       Utils.TRANSITION('e', '1'): {'f'},
+                       Utils.TRANSITION('f', '0'): {'f'},
+                       Utils.TRANSITION('f', '1'): {'f'}}
+        dfa = Automata({'0', '1'}, {'a', 'b', 'c', 'd', 'e', 'f'}, 'a',
+                       {'c', 'd', 'e'}, transitions)
+        mdfa = dfa.minimize()
+        # transition by transition was checked by hand with print :|
+        # cannot check transition by transition because of the randomness
+        self.assertEqual(3, len(mdfa.states))
+        self.assertEqual(1, len(mdfa.final_states))
+        self.assertEqual(6, len(mdfa.transitions))
+
+    # TODO: https://www.cs.odu.edu/~toida/nerzic/390teched/regular/fa/min-fa.html
+    # TODO: http://www.cs.ucr.edu/~stelo/cs150fall02/subset.pdf
+    # print(mdfa.states)
+    # print(mdfa.transitions)
+    # print(mdfa.q0)
+    # print(mdfa.final_states)
+
     def _create_automata(self):
         """Helper that create and return a default automata."""
         transitions = self._create_transitions()
