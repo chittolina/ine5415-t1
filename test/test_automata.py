@@ -198,12 +198,48 @@ class AutomataTests(unittest.TestCase):
         self.assertEqual(1, len(mdfa.final_states))
         self.assertEqual(6, len(mdfa.transitions))
 
-    # TODO: https://www.cs.odu.edu/~toida/nerzic/390teched/regular/fa/min-fa.html
-    # TODO: http://www.cs.ucr.edu/~stelo/cs150fall02/subset.pdf
-    # print(mdfa.states)
-    # print(mdfa.transitions)
-    # print(mdfa.q0)
-    # print(mdfa.final_states)
+    def test_dfa_minimization_02(self):
+        # example 1 from https://goo.gl/3RWgMn
+        dfa = Automata.read_from_json('./test/data/test_dfa_minimization_02')
+        mdfa = dfa.minimize()
+        # transition by transition was checked by hand with print :|
+        # cannot check transition by transition because of the randomness
+        self.assertEqual(4, len(mdfa.states))
+        self.assertEqual(1, len(mdfa.final_states))
+        self.assertEqual(8, len(mdfa.transitions))
+
+    def test_dfa_minimization_03(self):
+        # example 2 from https://goo.gl/3RWgMn
+        transitions = {Utils.TRANSITION('1', 'a'): {'2'},
+                       Utils.TRANSITION('1', 'b'): {'3'},
+                       Utils.TRANSITION('2', 'a'): {'2'},
+                       Utils.TRANSITION('2', 'b'): {'4'},
+                       Utils.TRANSITION('3', 'a'): {'3'},
+                       Utils.TRANSITION('3', 'b'): {'3'},
+                       Utils.TRANSITION('4', 'a'): {'6'},
+                       Utils.TRANSITION('4', 'b'): {'3'},
+                       Utils.TRANSITION('5', 'a'): {'5'},
+                       Utils.TRANSITION('5', 'b'): {'3'},
+                       Utils.TRANSITION('6', 'a'): {'5'},
+                       Utils.TRANSITION('6', 'b'): {'4'}}
+        dfa = Automata({'a', 'b'}, {'1', '2', '3', '4', '5', '6'}, '1',
+                       {'1', '2', '4', '5', '6'}, transitions)
+        mdfa = dfa.minimize()
+        # transition by transition was checked by hand with print :|
+        # cannot check transition by transition because of the randomness
+        self.assertEqual(6, len(mdfa.states))
+        self.assertEqual(5, len(mdfa.final_states))
+        self.assertEqual(12, len(mdfa.transitions))
+
+    def test_dfa_minimization_04(self):
+        # example from https://goo.gl/KMxzxm
+        dfa = Automata.read_from_json('./test/data/test_dfa_minimization_04')
+        mdfa = dfa.minimize()
+        # transition by transition was checked by hand with print :|
+        # cannot check transition by transition because of the randomness
+        self.assertEqual(5, len(mdfa.states))
+        self.assertEqual(1, len(mdfa.final_states))
+        self.assertEqual(10, len(mdfa.transitions))
 
     def _create_automata(self):
         """Helper that create and return a default automata."""

@@ -291,6 +291,7 @@ class Automata:
         nonaccepting_states = new_states - new_final_states
         partition = [new_final_states, nonaccepting_states]
         work_list = [new_final_states]
+        work_partition = partition.copy()
 
         while work_list:
             group = work_list.pop()
@@ -302,13 +303,16 @@ class Automata:
                     if k[1] == char and v.intersection(group):
                         sources.add(k[0])
 
-                for item in partition:
+                while work_partition:
+                    item = work_partition.pop()
                     intersection_result = sources.intersection(item)
                     relative_complement_result = item - sources
                     if intersection_result and relative_complement_result:
                         partition.remove(item)
                         partition.append(intersection_result)
                         partition.append(relative_complement_result)
+                        work_partition.append(intersection_result)
+                        work_partition.append(relative_complement_result)
 
                         if item in work_list:
                             work_list.remove(item)
@@ -320,6 +324,8 @@ class Automata:
                                 work_list.append(intersection_result)
                             else:
                                 work_list.append(relative_complement_result)
+
+                work_partition = partition.copy()
 
         return partition
 
