@@ -241,6 +241,13 @@ class AutomataTests(unittest.TestCase):
         self.assertEqual(1, len(mdfa.final_states))
         self.assertEqual(10, len(mdfa.transitions))
 
+    def test_union_01(self):
+        # TODO: asserts e melhorar
+        in_01 = Automata.read_from_json('./test/data/test_dfa_minimization_04')
+        in_02 = Automata.read_from_json('./test/data/'
+                                        'test_merge_nondistinguishable')
+        in_01.union(in_02)
+
     def _create_automata(self):
         """Helper that create and return a default automata."""
         transitions = self._create_transitions()

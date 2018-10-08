@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import json
+import itertools
 from collections import namedtuple
 from .utils_automata import Utils
 
@@ -184,8 +185,6 @@ class Automata:
         1. Remove unreachable states
         2. Merge nondistinguishable states
         """
-        # TODO: testes
-
         if not self.deterministic:
             raise Warning('Its necessary be a DFA to make minimization.')
 
@@ -328,6 +327,51 @@ class Automata:
                 work_partition = partition.copy()
 
         return partition
+
+    def union(self, other_dfa):
+        """Make union of two DFAs
+
+        Using the Sipser's proof that the class of regular languages is closed
+        under the union operation. Return a new automata that is the union of
+        the self instance and the dfa passed by parameter.
+        """
+        if not self.deterministic or not other_dfa.deterministic:
+            raise Warning('The inputs need to be DFAs to make the union.')
+
+        new_alphabet = self.alphabet.union(other_dfa.alphabet)
+
+        new_states = {x for x in itertools.product(self.states,
+                                                   other_dfa.states)}
+
+        new_q0 = (self.q0, other_dfa.q0)
+
+        first_group = {y for y in itertools.product(self.final_states,
+                                                    other_dfa.states)}
+        second_group = {z for z in itertools.product(self.states,
+                                                     other_dfa.final_states)}
+        new_final_states = first_group.union(second_group)
+
+        new_transitions = {}
+        for new_state in new_states:
+            for char in new_alphabet:
+                # possible do the next lines because of dfa's check at begin
+                first_target = self.transitions.get(Utils.TRANSITION(
+                    new_state[0], char))
+                if first_target is not None:
+                    first_target = next(iter(first_target))
+                second_target = other_dfa.transitions.get(Utils.TRANSITION(
+                    new_state[1], char))
+                if second_target is not None:
+                    second_target = next(iter(second_target))
+
+                new_transitions[Utils.TRANSITION(new_state, char)] = \
+                    {(first_target, second_target)}
+
+        # TODO: deixar automato normalizado para retornar novo, provavelmente
+        # vou ser prolixo e repetir o codigo do dfa. Fica como melhoria futura
+        # fazer um utils disso
+        # return Automata(new_alphabet, None, None, None, None)
+        # TODO: testes
 
     @staticmethod
     def read_from_json(filename):
