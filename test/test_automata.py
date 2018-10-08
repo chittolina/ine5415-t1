@@ -242,11 +242,69 @@ class AutomataTests(unittest.TestCase):
         self.assertEqual(10, len(mdfa.transitions))
 
     def test_union_01(self):
-        # TODO: asserts e melhorar
-        in_01 = Automata.read_from_json('./test/data/test_dfa_minimization_04')
-        in_02 = Automata.read_from_json('./test/data/'
-                                        'test_merge_nondistinguishable')
-        in_01.union(in_02)
+        # example from https://goo.gl/Rj1T8T
+        transitions_01 = {Utils.TRANSITION('1', 'a'): {'2'},
+                          Utils.TRANSITION('1', 'b'): {'4'},
+                          Utils.TRANSITION('2', 'a'): {'2'},
+                          Utils.TRANSITION('2', 'b'): {'3'},
+                          Utils.TRANSITION('3', 'a'): {'2'},
+                          Utils.TRANSITION('3', 'b'): {'3'},
+                          Utils.TRANSITION('4', 'a'): {'4'},
+                          Utils.TRANSITION('4', 'b'): {'4'}}
+        in_01 = Automata({'a', 'b'}, {'1', '2', '3', '4'}, '1', {'3'},
+                         transitions_01)
+        transitions_02 = {Utils.TRANSITION('1', 'a'): {'4'},
+                          Utils.TRANSITION('1', 'b'): {'2'},
+                          Utils.TRANSITION('2', 'a'): {'3'},
+                          Utils.TRANSITION('2', 'b'): {'2'},
+                          Utils.TRANSITION('3', 'a'): {'3'},
+                          Utils.TRANSITION('3', 'b'): {'2'},
+                          Utils.TRANSITION('4', 'a'): {'4'},
+                          Utils.TRANSITION('4', 'b'): {'4'}}
+        in_02 = Automata({'a', 'b'}, {'1', '2', '3', '4'}, '1', {'3'},
+                         transitions_02)
+        verbose_union = in_01.union(in_02)
+        union = verbose_union.minimize()
+        # transition by transition was checked by hand with print :|
+        # cannot check transition by transition because of the randomness
+        self.assertEqual(5, len(union.states))
+        self.assertEqual(2, len(union.final_states))
+        self.assertEqual(10, len(union.transitions))
+
+    def test_union_02(self):
+        # example from https://goo.gl/KEzUNJ
+        in_01 = Automata.read_from_json('./test/data/test_union_02_input_01')
+        in_02 = Automata.read_from_json('./test/data/test_union_02_input_02')
+        verbose_union = in_01.union(in_02)
+        union = verbose_union.minimize()
+        # transition by transition was checked by hand with print :|
+        # cannot check transition by transition because of the randomness
+        self.assertEqual(3, len(union.states))
+        self.assertEqual(1, len(union.final_states))
+        self.assertEqual(6, len(union.transitions))
+
+    def test_union_03(self):
+        # example from https://goo.gl/7zdezP
+        in_01 = Automata.read_from_json('./test/data/test_union_03_input_01')
+        in_02 = Automata.read_from_json('./test/data/test_union_03_input_02')
+        verbose_union = in_01.union(in_02)
+        union = verbose_union.minimize()
+        # transition by transition was checked by hand with print :|
+        # cannot check transition by transition because of the randomness
+        self.assertEqual(4, len(union.states))
+        self.assertEqual(1, len(union.final_states))
+        self.assertEqual(8, len(union.transitions))
+
+    def test_union_04(self):
+        # example from https://goo.gl/ya52uS
+        in_01 = Automata.read_from_json('./test/data/test_union_04_input_01')
+        in_02 = Automata.read_from_json('./test/data/test_union_04_input_02')
+        union = in_01.union(in_02)
+        # transition by transition was checked by hand with print :|
+        # cannot check transition by transition because of the randomness
+        self.assertEqual(8, len(union.states))
+        self.assertEqual(5, len(union.final_states))
+        self.assertEqual(16, len(union.transitions))
 
     def _create_automata(self):
         """Helper that create and return a default automata."""
@@ -259,6 +317,19 @@ class AutomataTests(unittest.TestCase):
         t0 = Utils.TRANSITION('A', 'a')
         transitions[t0] = set('B')
         return transitions
+
+    def _print_automata(self, automata):
+        """Helper that print the most importants infos from automata."""
+        print('States:')
+        print(automata.states)
+        print('Alphabet:')
+        print(automata.alphabet)
+        print('Final states:')
+        print(automata.final_states)
+        print('q0:')
+        print(automata.q0)
+        print('Transitions:')
+        print(automata.transitions)
 
 if __name__ == '__main__':
     unittest.main()

@@ -340,38 +340,43 @@ class Automata:
 
         new_alphabet = self.alphabet.union(other_dfa.alphabet)
 
-        new_states = {x for x in itertools.product(self.states,
-                                                   other_dfa.states)}
+        final_names = {}
+        new_states = set()
+        i = 0
+        for x in itertools.product(self.states, other_dfa.states):
+            name = 'q' + str(i)
+            new_states.add(name)
+            final_names[x] = name
+            i += 1
 
-        new_q0 = (self.q0, other_dfa.q0)
+        new_q0 = final_names[(self.q0, other_dfa.q0)]
 
-        first_group = {y for y in itertools.product(self.final_states,
-                                                    other_dfa.states)}
-        second_group = {z for z in itertools.product(self.states,
-                                                     other_dfa.final_states)}
+        first_group = {final_names[y] for y in itertools.product(
+            self.final_states, other_dfa.states)}
+        second_group = {final_names[z] for z in itertools.product(
+            self.states, other_dfa.final_states)}
         new_final_states = first_group.union(second_group)
 
         new_transitions = {}
-        for new_state in new_states:
+        for key, value in final_names.items():
             for char in new_alphabet:
                 # possible do the next lines because of dfa's check at begin
                 first_target = self.transitions.get(Utils.TRANSITION(
-                    new_state[0], char))
+                    key[0], char))
                 if first_target is not None:
                     first_target = next(iter(first_target))
+
                 second_target = other_dfa.transitions.get(Utils.TRANSITION(
-                    new_state[1], char))
+                    key[1], char))
                 if second_target is not None:
                     second_target = next(iter(second_target))
 
-                new_transitions[Utils.TRANSITION(new_state, char)] = \
-                    {(first_target, second_target)}
+                real_target = final_names.get((first_target, second_target))
 
-        # TODO: deixar automato normalizado para retornar novo, provavelmente
-        # vou ser prolixo e repetir o codigo do dfa. Fica como melhoria futura
-        # fazer um utils disso
-        # return Automata(new_alphabet, None, None, None, None)
-        # TODO: testes
+                new_transitions[Utils.TRANSITION(value, char)] = {real_target}
+
+        return Automata(new_alphabet, new_states, new_q0, new_final_states,
+                        new_transitions)
 
     @staticmethod
     def read_from_json(filename):
