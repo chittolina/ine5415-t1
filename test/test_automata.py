@@ -1,7 +1,7 @@
 import unittest
 import os
 from src.automata import Automata
-from src.utils_automata import Utils
+from src.utils import Utils
 
 
 class AutomataTests(unittest.TestCase):
