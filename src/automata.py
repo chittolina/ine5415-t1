@@ -335,6 +335,24 @@ class Automata:
         under the union operation. Return a new automata that is the union of
         the self instance and the dfa passed by parameter.
         """
+        return self._helper_union_and_intersection(other_dfa, True)
+
+    def intersection(self, other_dfa):
+        """Make intersection of two DFAs
+
+        Using the Sipser's proof that the class of regular languages is closed
+        under the intersection operation. Return a new automata that is the
+        intersection of the self instance and the dfa passed by parameter.
+        """
+        return self._helper_union_and_intersection(other_dfa, False)
+
+    def _helper_union_and_intersection(self, other_dfa, is_union):
+        """Helper to union and intersection of two DFAs
+
+        Since the algorithm to union and intersection of two DFAs are almost
+        equal, this helper make all proccess for both operations. The only
+        difference is in the creation of final states.
+        """
         if not self.deterministic or not other_dfa.deterministic:
             raise Warning('The inputs need to be DFAs to make the union.')
 
@@ -351,11 +369,15 @@ class Automata:
 
         new_q0 = final_names[(self.q0, other_dfa.q0)]
 
-        first_group = {final_names[y] for y in itertools.product(
-            self.final_states, other_dfa.states)}
-        second_group = {final_names[z] for z in itertools.product(
-            self.states, other_dfa.final_states)}
-        new_final_states = first_group.union(second_group)
+        if is_union:
+            first_group = {final_names[y] for y in itertools.product(
+                self.final_states, other_dfa.states)}
+            second_group = {final_names[z] for z in itertools.product(
+                self.states, other_dfa.final_states)}
+            new_final_states = first_group.union(second_group)
+        else:
+            new_final_states = {final_names[y] for y in itertools.product(
+                self.final_states, other_dfa.final_states)}
 
         new_transitions = {}
         for key, value in final_names.items():

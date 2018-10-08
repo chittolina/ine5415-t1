@@ -306,6 +306,77 @@ class AutomataTests(unittest.TestCase):
         self.assertEqual(5, len(union.final_states))
         self.assertEqual(16, len(union.transitions))
 
+    def test_intersection_01(self):
+        # example from https://goo.gl/ya52uS
+        in_01 = Automata.read_from_json('./test/data/test_union_04_input_01')
+        in_02 = Automata.read_from_json('./test/data/test_union_04_input_02')
+        intersection = in_01.intersection(in_02)
+        # transition by transition was checked by hand with print :|
+        # cannot check transition by transition because of the randomness
+        self.assertEqual(8, len(intersection.states))
+        self.assertEqual(1, len(intersection.final_states))
+        self.assertEqual(16, len(intersection.transitions))
+
+    def test_intersection_02(self):
+        # example from https://goo.gl/7zdezP
+        in_01 = Automata.read_from_json('./test/data/test_union_03_input_01')
+        in_02 = Automata.read_from_json('./test/data/test_union_03_input_02')
+        intersection = in_01.intersection(in_02)
+        # transition by transition was checked by hand with print :|
+        # cannot check transition by transition because of the randomness
+        self.assertEqual(9, len(intersection.states))
+        self.assertEqual(1, len(intersection.final_states))
+        self.assertEqual(18, len(intersection.transitions))
+
+    def test_intersection_03(self):
+        # first example from https://goo.gl/5tH9QF
+        transitions_01 = {Utils.TRANSITION('1', 'a'): {'2'},
+                          Utils.TRANSITION('1', 'b'): {'1'},
+                          Utils.TRANSITION('2', 'a'): {'3'},
+                          Utils.TRANSITION('2', 'b'): {'2'},
+                          Utils.TRANSITION('3', 'a'): {'4'},
+                          Utils.TRANSITION('3', 'b'): {'3'},
+                          Utils.TRANSITION('4', 'a'): {'4'},
+                          Utils.TRANSITION('4', 'b'): {'4'}}
+        in_01 = Automata({'a', 'b'}, {'1', '2', '3', '4'}, '1', {'3'},
+                         transitions_01)
+        transitions_02 = {Utils.TRANSITION('1', 'a'): {'1'},
+                          Utils.TRANSITION('1', 'b'): {'2'},
+                          Utils.TRANSITION('2', 'a'): {'2'},
+                          Utils.TRANSITION('2', 'b'): {'3'},
+                          Utils.TRANSITION('3', 'a'): {'3'},
+                          Utils.TRANSITION('3', 'b'): {'3'}}
+        in_02 = Automata({'a', 'b'}, {'1', '2', '3'}, '1', {'3'},
+                         transitions_02)
+        intersection = in_01.intersection(in_02)
+        # transition by transition was checked by hand with print :|
+        # cannot check transition by transition because of the randomness
+        self.assertEqual(12, len(intersection.states))
+        self.assertEqual(1, len(intersection.final_states))
+        self.assertEqual(24, len(intersection.transitions))
+
+    def test_intersection_04(self):
+        # second example from https://goo.gl/5tH9QF
+        transitions_01 = {Utils.TRANSITION('1', 'a'): {'2'},
+                          Utils.TRANSITION('1', 'b'): {'1'},
+                          Utils.TRANSITION('2', 'a'): {'1'},
+                          Utils.TRANSITION('2', 'b'): {'2'}}
+        in_01 = Automata({'a', 'b'}, {'1', '2'}, '1', {'1'}, transitions_01)
+        transitions_02 = {Utils.TRANSITION('1', 'a'): {'2'},
+                          Utils.TRANSITION('1', 'b'): {'1'},
+                          Utils.TRANSITION('2', 'a'): {'3'},
+                          Utils.TRANSITION('2', 'b'): {'1'},
+                          Utils.TRANSITION('3', 'a'): {'3'},
+                          Utils.TRANSITION('3', 'b'): {'3'}}
+        in_02 = Automata({'a', 'b'}, {'1', '2', '3'}, '1', {'1'},
+                         transitions_02)
+        intersection = in_01.intersection(in_02)
+        # transition by transition was checked by hand with print :|
+        # cannot check transition by transition because of the randomness
+        self.assertEqual(6, len(intersection.states))
+        self.assertEqual(1, len(intersection.final_states))
+        self.assertEqual(12, len(intersection.transitions))
+
     def _create_automata(self):
         """Helper that create and return a default automata."""
         transitions = self._create_transitions()
