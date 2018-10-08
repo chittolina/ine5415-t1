@@ -2,7 +2,7 @@
 import json
 import itertools
 from collections import namedtuple
-from .utils_automata import Utils
+from .utils import Utils
 
 
 class Automata:
