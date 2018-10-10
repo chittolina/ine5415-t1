@@ -5,6 +5,8 @@ from src.utils import Utils
 
 
 class AutomataTests(unittest.TestCase):
+    """Tests to Automata class"""
+
     def test_alright(self):
         fa = self._create_automata()
         self.assertIsInstance(fa, Automata)

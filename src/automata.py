@@ -1,14 +1,18 @@
 # -*- coding: utf-8 -*-
 import json
 import itertools
-from collections import namedtuple
 from .utils import Utils
 
 
 class Automata:
+    """Representation of an automata
+
+    The automata can be deterministic or not. After validation in constructor,
+    then this property is defined.
+    """
 
     def __init__(self, alphabet, states, q0, final_states, transitions):
-        if self._validate(alphabet, states, q0, final_states, transitions):
+        if self.validate(alphabet, states, q0, final_states, transitions):
             self.alphabet = alphabet  # type is a set of string
             self.states = states  # type is a set of string
             self.q0 = q0  # type is a string
@@ -20,33 +24,11 @@ class Automata:
 
         self.deterministic = self._is_deterministic()
 
-    def _validate(self, alphabet, states, q0, final_states, transitions):
-        """Do validation about type, size and inner relationship.
-
-        To keep simple, dont has validation in transitions or complex
-        validations in alphabet.
-        """
-        if not type(alphabet) is set or \
-           not type(states) is set or \
-           not type(q0) is str or \
-           not type(final_states) is set or \
-           not type(transitions) is dict:
-            return False
-
-        if not alphabet or not states or not final_states or not transitions:
-            return False
-
-        if not final_states.issubset(states) or \
-                not states.issuperset(final_states) or \
-                q0 not in states:
-            return False
-
-        if alphabet.intersection(states):
-            return False
-
-        return True
-
     def save_json(self, filename):
+        """Save in filesystem a json file from an automata
+
+        The path in filename don't need contain the '.json' extension.
+        """
         data = {}
         data['alphabet'] = list(self.alphabet)
         data['states'] = list(self.states)
@@ -68,8 +50,8 @@ class Automata:
         if len(self.transitions) != len(self.alphabet) * len(self.states):
             return False
 
-        for k, v in self.transitions.items():
-            if k[1] == Utils.EPSILON or len(v) != 1:
+        for key, value in self.transitions.items():
+            if key[1] == Utils.EPSILON or len(value) != 1:
                 return False
 
         return True
@@ -77,9 +59,9 @@ class Automata:
     def to_dfa(self):
         """Conversion of an NFA to a DFA
 
-        Use the technique known as 'the subset construction'.
+        Use the technique known as 'the subset construction' to return the new
+        DFA
         """
-        # TODO: when code the view, see the better way to work with this
         if self.deterministic:
             raise Warning('Automata is a DFA. Isnt necessary make conversion.')
 
@@ -161,10 +143,8 @@ class Automata:
         List of NFA states to which there is a transition on input symbol char
         from some state s in states.
         """
-        # TODO: maybe _move and _e_closure could be just one method
         stack = [s for s in states]
         result = []
-
         while stack:
             top_state = stack.pop()
             transition = Utils.TRANSITION(top_state, char)
@@ -184,6 +164,8 @@ class Automata:
         just two steps:
         1. Remove unreachable states
         2. Merge nondistinguishable states
+
+        Then return a minimized DFA.
         """
         if not self.deterministic:
             raise Warning('Its necessary be a DFA to make minimization.')
@@ -298,9 +280,9 @@ class Automata:
                 # create a set of states for which a transition on char leads
                 # to a state in group
                 sources = set()
-                for k, v in self.transitions.items():
-                    if k[1] == char and v.intersection(group):
-                        sources.add(k[0])
+                for key, value in self.transitions.items():
+                    if key[1] == char and value.intersection(group):
+                        sources.add(key[0])
 
                 while work_partition:
                     item = work_partition.pop()
@@ -328,56 +310,59 @@ class Automata:
 
         return partition
 
-    def union(self, other_dfa):
+    def union(self, other):
         """Make union of two DFAs
 
         Using the Sipser's proof that the class of regular languages is closed
         under the union operation. Return a new automata that is the union of
         the self instance and the dfa passed by parameter.
         """
-        return self._helper_union_and_intersection(other_dfa, True)
+        return self._helper_union_and_intersection(other, True)
 
-    def intersection(self, other_dfa):
+    def intersection(self, other):
         """Make intersection of two DFAs
 
         Using the Sipser's proof that the class of regular languages is closed
         under the intersection operation. Return a new automata that is the
         intersection of the self instance and the dfa passed by parameter.
         """
-        return self._helper_union_and_intersection(other_dfa, False)
+        return self._helper_union_and_intersection(other, False)
 
-    def _helper_union_and_intersection(self, other_dfa, is_union):
+    def _helper_union_and_intersection(self, other, is_union):
         """Helper to union and intersection of two DFAs
 
         Since the algorithm to union and intersection of two DFAs are almost
         equal, this helper make all proccess for both operations. The only
-        difference is in the creation of final states.
+        difference is in the creation of final states. This difference is
+        managed by the parameter 'is_union'.
+
+        Return a resultant automata.
         """
-        if not self.deterministic or not other_dfa.deterministic:
+        if not self.deterministic or not other.deterministic:
             raise Warning('The inputs need to be DFAs to make the union.')
 
-        new_alphabet = self.alphabet.union(other_dfa.alphabet)
+        new_alphabet = self.alphabet.union(other.alphabet)
 
         final_names = {}
         new_states = set()
         i = 0
-        for x in itertools.product(self.states, other_dfa.states):
+        for cartersian_product in itertools.product(self.states, other.states):
             name = 'q' + str(i)
             new_states.add(name)
-            final_names[x] = name
+            final_names[cartersian_product] = name
             i += 1
 
-        new_q0 = final_names[(self.q0, other_dfa.q0)]
+        new_q0 = final_names[(self.q0, other.q0)]
 
         if is_union:
             first_group = {final_names[y] for y in itertools.product(
-                self.final_states, other_dfa.states)}
+                self.final_states, other.states)}
             second_group = {final_names[z] for z in itertools.product(
-                self.states, other_dfa.final_states)}
+                self.states, other.final_states)}
             new_final_states = first_group.union(second_group)
         else:
             new_final_states = {final_names[y] for y in itertools.product(
-                self.final_states, other_dfa.final_states)}
+                self.final_states, other.final_states)}
 
         new_transitions = {}
         for key, value in final_names.items():
@@ -388,7 +373,7 @@ class Automata:
                 if first_target is not None:
                     first_target = next(iter(first_target))
 
-                second_target = other_dfa.transitions.get(Utils.TRANSITION(
+                second_target = other.transitions.get(Utils.TRANSITION(
                     key[1], char))
                 if second_target is not None:
                     second_target = next(iter(second_target))
@@ -402,6 +387,10 @@ class Automata:
 
     @staticmethod
     def read_from_json(filename):
+        """Return an automata from a json file
+
+        The path in filename don't need contain the '.json' extension.
+        """
         # str come as unicode from json
         with open(filename + '.json', 'r') as load_file:
             data = json.load(load_file)
@@ -412,8 +401,35 @@ class Automata:
         final_states = set(data['final_states'])
 
         transitions = {}
-        for l in data['transitions']:
-            t = Utils.TRANSITION(l[0], l[1])
-            transitions[t] = set(l[2])
+        for lst in data['transitions']:
+            transition = Utils.TRANSITION(lst[0], lst[1])
+            transitions[transition] = set(lst[2])
 
         return Automata(alphabet, states, q0, final_states, transitions)
+
+    @staticmethod
+    def validate(alphabet, states, q0, final_states, transitions):
+        """Do automata validation about type, size and inner relationship
+
+        To keep simple, don't has validation in transitions or complex
+        validations in alphabet.
+        """
+        if not isinstance(alphabet, set) or \
+           not isinstance(states, set) or \
+           not isinstance(q0, str) or \
+           not isinstance(final_states, set) or \
+           not isinstance(transitions, dict):
+            return False
+
+        if not alphabet or not states or not final_states or not transitions:
+            return False
+
+        if not final_states.issubset(states) or \
+                not states.issuperset(final_states) or \
+                q0 not in states:
+            return False
+
+        if alphabet.intersection(states):
+            return False
+
+        return True
