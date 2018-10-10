@@ -35,7 +35,8 @@ class Grammar(object):
             json.dump(data, write_file, indent=4)
 
     def _get_nonterminals(self):
-        nonterminals = set(self._initial_symbol)
+        nonterminals = set()
+        nonterminals.add(self._initial_symbol)
         for production in self._productions:
             nonterminals.add(production[0])
             if len(production) == 3:
@@ -67,6 +68,7 @@ class Grammar(object):
             transitions[input] = list()
         transitions[input].append(output)
 
+    @staticmethod
     def read_from_json(filename):
         with open(filename + '.json', 'r') as read_file:
             data = json.load(read_file)
