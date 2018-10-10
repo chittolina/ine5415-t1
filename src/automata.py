@@ -385,6 +385,30 @@ class Automata:
         return Automata(new_alphabet, new_states, new_q0, new_final_states,
                         new_transitions)
 
+    def to_grammar(self):
+        """Return a grammar equivalent to this automaton."""
+        from .grammar import Grammar
+        if not self.deterministic:
+            dfa = self.to_dfa()
+            return dfa.to_grammar()
+        initial_symbol = self.q0.upper()
+        productions = self._makeProductions()
+        return Grammar(productions, initial_symbol)
+
+    def _makeProductions(self):
+        productions = list()
+        for input in self.transitions:
+            for output in self.transitions[input]:
+                self._include_productions(productions, input, output)
+        return productions
+
+    def _include_productions(self, productions, input, output):
+        if output in self.final_states:
+            production = (input[0].upper(), input[1])
+            productions.append(production)
+        production = (input[0].upper(), input[1], output.upper())
+        productions.append(production)
+
     @staticmethod
     def read_from_json(filename):
         """Return an automata from a json file
