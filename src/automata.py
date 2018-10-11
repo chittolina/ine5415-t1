@@ -114,6 +114,10 @@ class Automata:
         return Automata(self.alphabet, normal_states, normal_q0,
                         normal_final_states, normal_transitions)
 
+    def transition(self, state, input):
+        transition = Utils.TRANSITION(state, input)
+        return self.transitions[transition]
+
     def _e_closure(self, states):
         """Return e-closure of states parameter
 

@@ -57,6 +57,10 @@ ApplicationWindow {
             text: 'Import automata'
             onClicked: automataFileDialog.open()
           }
+          Text {
+            anchors.fill: parent
+            text: operator.automatas
+          }
         }
         Rectangle {
           width: 200
