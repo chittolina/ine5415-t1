@@ -67,11 +67,11 @@ ApplicationWindow {
             text: operator.automatas
           }
           Text {
-            anchors { top: parent.top; topMargin: 150; left: parent.left; leftMargin: 200 }
+            anchors { top: parent.top; topMargin: 150; right: parent.right; rightMargin: 200 }
             text: operator.automataFromAutomata
           }
           Text {
-            anchors { top: parent.top; topMargin: 150; right: parent.right; rightMargin: 20 }
+            anchors { top: parent.top; topMargin: 150; right: parent.right; rightMargin: 200 }
             text: operator.grammarFromAutomata
           }
         }
@@ -81,6 +81,29 @@ ApplicationWindow {
           color: 'white'
           Text {
               text: 'Grammar'
+          }
+          Button {
+            anchors { top: parent.top; topMargin: 100; left: parent.left; leftMargin: 20 }
+            text: 'Import grammar'
+            onClicked: grammarFileDialog.open()
+          }
+          Button {
+            anchors { top: parent.top; topMargin: 100; left: parent.left; leftMargin: 200 }
+            text: 'Clear'
+            onClicked: operator.clear_grammars('')
+          }
+          Button {
+            anchors { top: parent.top; topMargin: 20; left: parent.left; leftMargin: 20 }
+            text: 'GR to DFA'
+            onClicked: operator.grammar_to_dfa('')
+          }
+          Text {
+            anchors { top: parent.top; topMargin: 150; left: parent.left; leftMargin: 20 }
+            text: operator.grammars
+          }
+          Text {
+            anchors { top: parent.top; topMargin: 150; right: parent.right; rightMargin: 20 }
+            text: operator.automataFromGrammar
           }
         }
         Rectangle {
@@ -100,6 +123,14 @@ ApplicationWindow {
       folder: shortcuts.home
       onAccepted: {
           operator.load_automata(automataFileDialog.fileUrls)
+      }
+    }
+    FileDialog {
+      id: grammarFileDialog
+      title: "Please choose a file"
+      folder: shortcuts.home
+      onAccepted: {
+          operator.load_grammar(grammarFileDialog.fileUrls)
       }
     }
 }
