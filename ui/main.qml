@@ -30,22 +30,27 @@ ApplicationWindow {
           Button {
             anchors { top: parent.top; topMargin: 20; left: parent.left; leftMargin: 20 }
             text: 'NFA to DFA'
+            onClicked: operator.nfa_to_dfa('')
           }
           Button {
             anchors { top: parent.top; topMargin: 20; left: parent.left; leftMargin: 150 }
             text: 'DFA to GR'
+            onClicked: operator.dfa_to_grammar('')
           }
           Button {
             anchors { top: parent.top; topMargin: 20; left: parent.left; leftMargin: 300 }
             text: 'DFA Union'
+            onClicked: operator.dfa_union('')
           }
           Button {
             anchors { top: parent.top; topMargin: 20; left: parent.left; leftMargin: 450 }
             text: 'DFA Intersection'
+            onClicked: operator.dfa_intersection('')
           }
           Button {
             anchors { top: parent.top; topMargin: 20; left: parent.left; leftMargin: 600 }
             text: 'DFA Minimize'
+            onClicked: operator.dfa_minimize('')
           }
           Button {
             anchors { top: parent.top; topMargin: 100; left: parent.left; leftMargin: 20 }
@@ -70,15 +75,14 @@ ApplicationWindow {
           }
         }
       }
+    }
 
-
-          FileDialog {
-            id: automataFileDialog
-            title: "Please choose a file"
-            folder: shortcuts.home
-            onAccepted: {
-                operator.load_automata(automataFileDialog.fileUrls)
-            }
-          }
+    FileDialog {
+      id: automataFileDialog
+      title: "Please choose a file"
+      folder: shortcuts.home
+      onAccepted: {
+          operator.load_automata(automataFileDialog.fileUrls)
+      }
     }
 }

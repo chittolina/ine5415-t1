@@ -13,6 +13,12 @@ class Operator(QObject):
         self.win = parent
         self.ctx = context
         self.automatas = []
+        self.grammars = []
+        self.results = {
+            'automata': None,
+            'grammar': None,
+            'regex': None
+        }
 
     @pyqtSlot(QVariant)
     def load_automata(self, filename):
@@ -23,7 +29,55 @@ class Operator(QObject):
             # TODO: Show some dialog to the user
             print('Reached the max number automatas')
 
+    @pyqtSlot(QVariant)
+    def nfa_to_dfa(self):
+        if len(self.automatas) != 1:
+            # TODO: Show some dialog to the user
+            print('Only one automata is allowed for this operation')
+            return
 
+        result = self.automatas[0].to_dfa()
+        self.results['automata'] = result
+
+    @pyqtSlot(QVariant)
+    def dfa_to_grammar(self):
+        if len(self.automatas) != 1:
+            # TODO: Show some dialog to the user
+            print('Only one automata is allowed for this operation')
+            return
+
+        result = self.automatas[0].to_grammar()
+        self.results['grammar'] = result
+
+    @pyqtSlot(QVariant)
+    def dfa_union(self):
+        if len(self.automatas) != 2:
+            # TODO: Show some dialog to the user
+            print('You need two automatas to perform this operation')
+            return
+
+        result = self.automatas[0].union(self.automatas[1])
+        self.results['automata'] = result
+
+    @pyqtSlot(QVariant)
+    def dfa_intersection(self):
+        if len(self.automatas) != 2:
+            # TODO: Show some dialog to the user
+            print('You need two automatas to perform this operation')
+            return
+
+        result = self.automatas[0].intersection(self.automatas[1])
+        self.results['automata'] = result
+
+    @pyqtSlot(QVariant)
+    def dfa_minimize(self):
+        if len(self.automatas) != 1:
+            # TODO: Show some dialog to the user
+            print('Only one automata is allowed for this operation')
+            return
+
+        result = self.automatas[0].minimize()
+        self.results['automata'] = result
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
