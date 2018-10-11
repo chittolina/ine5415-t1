@@ -14,11 +14,10 @@ class Operator(QObject):
         self._ctx = context
         self._automatas = []
         self._grammars = []
-        self._results = {
-            'automata': None,
-            'grammar': None,
-            'regex': None
-        }
+        self._grammarFromAutomata = None
+        self._automataFromAutomata = None
+        self._automataFromGrammar = None
+        self._automataFromRegex = None
 
     @pyqtProperty(str, notify=automataLoaded)
     def automatas(self):
@@ -57,6 +56,15 @@ class Operator(QObject):
             print('Reached the max number automatas')
 
     @pyqtSlot(QVariant)
+    def clear_automatas(self):
+        self._automatas = []
+        self._automataFromAutomata = None
+        self._grammarFromAutomata = None
+        self.automatas = self._automatas
+        self.automataFromAutomata = self._automataFromAutomata
+        self.grammarFromAutomata = self._grammarFromAutomata
+
+    @pyqtSlot(QVariant)
     def nfa_to_dfa(self):
         if len(self._automatas) != 1:
             # TODO: Show some dialog to the user
@@ -64,7 +72,7 @@ class Operator(QObject):
             return
 
         result = self._automatas[0].to_dfa()
-        self._results['automata'] = result
+        self._automataFromAutomata = result
 
     @pyqtSlot(QVariant)
     def dfa_to_grammar(self):
@@ -74,7 +82,8 @@ class Operator(QObject):
             return
 
         result = self._automatas[0].to_grammar()
-        self._results['grammar'] = result
+        self._grammarFromAutomata = result
+        self.grammarFromAutomata = self._grammarFromAutomata
 
     @pyqtSlot(QVariant)
     def dfa_union(self):
@@ -84,7 +93,8 @@ class Operator(QObject):
             return
 
         result = self._automatas[0].union(self._automatas[1])
-        self._results['automata'] = result
+        self._automataFromAutomata = result
+        self.automataFromAutomata = self._automataFromAutomata
 
     @pyqtSlot(QVariant)
     def dfa_intersection(self):
@@ -94,7 +104,8 @@ class Operator(QObject):
             return
 
         result = self._automatas[0].intersection(self._automatas[1])
-        self._results['automata'] = result
+        self._automataFromAutomata = result
+        self.automataFromAutomata = self._automataFromAutomata
 
     @pyqtSlot(QVariant)
     def dfa_minimize(self):
@@ -104,7 +115,8 @@ class Operator(QObject):
             return
 
         result = self._automatas[0].minimize()
-        self._results['automata'] = result
+        self._automataFromAutomata = result
+        self.automataFromAutomata = self._automataFromAutomata
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

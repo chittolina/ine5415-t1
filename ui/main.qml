@@ -5,12 +5,12 @@ import QtQuick.Dialogs 1.0
 
 ApplicationWindow {
     title: 'Test'
-    width: 800
-    height: 900
+    width: 1000
+    height: 1200
 
     Page {
-      width: 800
-      height: 900
+      width: 1000
+      height: 1200
 
       header: Label {
         text: 'Trabalho 1 - INE5421'
@@ -21,8 +21,8 @@ ApplicationWindow {
         orientation: Qt.Vertical
 
         Rectangle {
-          width: 200
-          height: 300
+          width: 1000
+          height: 400
           color: 'white'
           Text {
               text: 'Automata'
@@ -57,22 +57,35 @@ ApplicationWindow {
             text: 'Import automata'
             onClicked: automataFileDialog.open()
           }
+          Button {
+            anchors { top: parent.top; topMargin: 100; left: parent.left; leftMargin: 200 }
+            text: 'Clear'
+            onClicked: operator.clear_automatas('')
+          }
           Text {
-            anchors.fill: parent
+            anchors { top: parent.top; topMargin: 150; left: parent.left; leftMargin: 20 }
             text: operator.automatas
+          }
+          Text {
+            anchors { top: parent.top; topMargin: 150; left: parent.left; leftMargin: 200 }
+            text: operator.automataFromAutomata
+          }
+          Text {
+            anchors { top: parent.top; topMargin: 150; right: parent.right; rightMargin: 20 }
+            text: operator.grammarFromAutomata
           }
         }
         Rectangle {
-          width: 200
-          height: 300
+          width: 1000
+          height: 400
           color: 'white'
           Text {
               text: 'Grammar'
           }
         }
         Rectangle {
-          width: 200
-          height: 300
+          width: 1000
+          height: 400
           color: 'white'
           Text {
               text: 'Regular expression'
