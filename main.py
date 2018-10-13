@@ -27,8 +27,9 @@ class Operator(QObject):
     @pyqtProperty(str, notify=automataLoaded)
     def automatas(self):
         result_string = ''
+
         for automata in self._automatas:
-            for i, input in enumerate(automata.alphabet):
+            for i, input in enumerate(list(automata.alphabet) + ['&']):
                 if i == 0:
                     result_string += '\t\t\t' + input
                 else:
@@ -41,8 +42,11 @@ class Operator(QObject):
                     result_string += '->\t' + state + '\t'
                 else:
                     result_string += '\t' + state + '\t'
-                for input in automata.alphabet:
-                    result_string += '\t' + str(list(automata.transition(state, input)))
+                for input in list(automata.alphabet) + ['&']:
+                    if automata.transition(state, input):
+                        result_string += '\t' + str(list(automata.transition(state, input)))
+                    else:
+                        result_string += '\t' + str(list([]))
                 result_string += '\n'
 
 
@@ -82,19 +86,25 @@ class Operator(QObject):
         a = self._automataFromGrammar
         if not a:
             return
-        for i, input in enumerate(a.alphabet):
+        for i, input in enumerate(list(a.alphabet) + ['&']):
             if i == 0:
-                result_string += '\t\t' + input
+                result_string += '\t\t\t' + input
             else:
                 result_string += '\t' + input
         result_string += '\n'
         for state in a.states:
-            result_string += state + '\t'
-            for input in a.alphabet:
-                result_string += '\t' + str(list(a.transition(state, input)))
+            if state in a.final_states:
+                result_string += '*\t' + state + '\t'
+            elif state == a.q0:
+                result_string += '->\t' + state + '\t'
+            else:
+                result_string += '\t' + state + '\t'
+            for input in list(a.alphabet) + ['&']:
+                if a.transition(state, input):
+                    result_string += '\t' + str(list(a.transition(state, input)))
+                else:
+                    result_string += '\t' + str(list([]))
             result_string += '\n'
-
-
 
         return result_string
 

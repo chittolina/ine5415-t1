@@ -115,8 +115,21 @@ class Automata:
                         normal_final_states, normal_transitions)
 
     def transition(self, state, input):
+        """Return a transition for the given state and input
+
+        Set of states resulting from the found transition or False if no transitions
+        is available for the received parameters.
+
+        Type of parameter 'states' is a list.
+        Type of parameter 'input' is a string.
+        """
+        if input == '&':
+            input = Utils.EPSILON
         transition = Utils.TRANSITION(state, input)
-        return self.transitions[transition]
+
+        if transition in self.transitions:
+            return self.transitions[transition]
+        return False
 
     def _e_closure(self, states):
         """Return e-closure of states parameter
