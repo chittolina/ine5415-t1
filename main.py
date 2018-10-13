@@ -201,6 +201,7 @@ class Operator(QObject):
 
         result = self._automatas[0].to_dfa()
         self._automataFromAutomata = result
+        self.automataFromAutomata = self._automataFromAutomata
 
     @pyqtSlot(QVariant)
     def dfa_to_grammar(self):
