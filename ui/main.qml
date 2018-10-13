@@ -67,11 +67,11 @@ ApplicationWindow {
             text: operator.automatas
           }
           Text {
-            anchors { top: parent.top; topMargin: 150; right: parent.right; rightMargin: 200 }
+            anchors { top: parent.top; topMargin: 150; right: parent.right; rightMargin: 20 }
             text: operator.automataFromAutomata
           }
           Text {
-            anchors { top: parent.top; topMargin: 150; right: parent.right; rightMargin: 200 }
+            anchors { top: parent.top; topMargin: 150; right: parent.right; rightMargin: 20 }
             text: operator.grammarFromAutomata
           }
         }
