@@ -11,20 +11,8 @@ Alunos:
 - Gabriel Leal Chittolina Amaral
 - Lucas João Martins
 """
-
-'''
-GLC:
-<regex>     ::= <term>
-                <term> '|' <regex>
-<term>      ::=  { <factor> }
-<factor>    ::= <base> { '*' }
-                <base> { '?' }
-                <base> { '.' }
-<base>      ::= <char>
-                '(' <regex> ')'
-'''
-
 import re
+
 
 class Node:
     count = 0
@@ -41,10 +29,22 @@ END = '#'
 OPERATORS = ['|', '*', '.', '?']
 ALPHABET = re.compile(r"([A-z0-9&])|(.)")
 
-class RegexParser:
 
-    def __init__(self, input):
-        self.input = input
+class RegexParser:
+    """
+    GLC:
+    <regex>     ::= <term>
+                    <term> '|' <regex>
+    <term>      ::=  { <factor> }
+    <factor>    ::= <base> { '*' }
+                    <base> { '?' }
+                    <base> { '.' }
+    <base>      ::= <char>
+                    '(' <regex> ')'
+    """
+
+    def __init__(self, src):
+        self.input = src
         if not self._validate():
             raise RuntimeError('Invalid input string.')
 
@@ -100,7 +100,6 @@ class RegexParser:
 
     def _factor(self):
         base = self._base()
-        char = self._peek()
 
         while self._more() and self._peek() in ['?', '*']:
             base = Node(self._next(), base, None)
@@ -120,7 +119,8 @@ class RegexParser:
             return self._firstpos(node.left).union(self._firstpos(node.right))
         if node.symbol == '.':
             if self._nullable(node.left):
-                return self._firstpos(node.left).union(self._firstpos(node.right))
+                return self._firstpos(node.left).union(
+                    self._firstpos(node.right))
             else:
                 return self._firstpos(node.left)
         if node.symbol == '*':
@@ -136,7 +136,8 @@ class RegexParser:
             return self._firstpos(node.right).union(self._firstpos(node.left))
         if node.symbol == '.':
             if self._nullable(node.right):
-                return self._firstpos(node.right).union(self._firstpos(node.left))
+                return self._firstpos(node.right).union(
+                    self._firstpos(node.left))
             else:
                 return self._firstpos(node.right)
         if node.symbol == '*':
@@ -146,7 +147,6 @@ class RegexParser:
             return set([])
         else:
             return set([node.index])
-
 
     def _nullable(self, node):
         if node.symbol == '*':
