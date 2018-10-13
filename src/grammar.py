@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """INE 5421 - Linguagem Formais e Compiladores - Trabalho 01
 
 Universidade Federal de Santa Catarina

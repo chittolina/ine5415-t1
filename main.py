@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """INE 5421 - Linguagem Formais e Compiladores - Trabalho 01
 
 Universidade Federal de Santa Catarina
@@ -10,8 +12,6 @@ Alunos:
 - Gabriel Leal Chittolina Amaral
 - Lucas João Martins
 """
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 import sys
 from src.automata import Automata
 from src.grammar import Grammar
