@@ -1,4 +1,16 @@
 # -*- coding: utf-8 -*-
+"""INE 5421 - Linguagem Formais e Compiladores - Trabalho 01
+
+Universidade Federal de Santa Catarina
+
+Departamento de Informática e Estatística (INE)
+
+Alunos:
+
+- Filipe Oliveira de Borba
+- Gabriel Leal Chittolina Amaral
+- Lucas João Martins
+"""
 
 '''
 GLC:
