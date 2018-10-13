@@ -6,11 +6,11 @@ import QtQuick.Dialogs 1.0
 ApplicationWindow {
     title: 'Test'
     width: 1000
-    height: 1200
+    height: 1000
 
     Page {
       width: 1000
-      height: 1200
+      height: 1000
 
       header: Label {
         text: 'Trabalho 1 - INE5421'
@@ -22,7 +22,7 @@ ApplicationWindow {
 
         Rectangle {
           width: 1000
-          height: 400
+          height: 330
           color: 'white'
           Text {
               text: 'Automata'
@@ -77,7 +77,7 @@ ApplicationWindow {
         }
         Rectangle {
           width: 1000
-          height: 400
+          height: 330
           color: 'white'
           Text {
               text: 'Grammar'
@@ -108,7 +108,7 @@ ApplicationWindow {
         }
         Rectangle {
           width: 1000
-          height: 400
+          height: 330
           color: 'white'
           Text {
               text: 'Regular expression'
