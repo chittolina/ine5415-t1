@@ -14,13 +14,18 @@ import json
 
 from .utils import Utils
 
-class Grammar(object):
+
+class Grammar:
+    """Representation of a grammar
+
+    Assumes each production "A -> aB", where B is optional, is of the form:
+    ("A", "a"[, "B"])
+    """
 
     def __init__(self, productions, initial_symbol):
-        """Constructs a regular grammar from a list of productions and the initial symbol.
+        """Constructs a regular grammar
 
-        Assumes each production "A -> aB", where B is optional, is of the form:
-            ("A", "a"[, "B"])
+        From a list of productions and the initial symbol.
         """
         self._initial_symbol = initial_symbol
         self._productions = set(productions)
@@ -28,6 +33,7 @@ class Grammar(object):
         self._terminals = self._get_terminals()
 
     def to_automaton(self):
+        """Return an automata from the self grammar"""
         from .automata import Automata
         transitions = self._make_transitions()
         final_states = set(Utils.NEW_FINAL_STATE)
@@ -37,6 +43,10 @@ class Grammar(object):
         return Automata(alphabet, states, q0, final_states, transitions)
 
     def save_json(self, filename):
+        """Save in filesystem a json file from a grammar
+
+        The path in filename don't need contain the '.json' extension.
+        """
         data = {
             'nonterminals': self._nonterminals,
             'terminals': self._terminals,
@@ -47,6 +57,7 @@ class Grammar(object):
             json.dump(data, write_file, indent=4)
 
     def _get_nonterminals(self):
+        """Helper to grammar constructor"""
         nonterminals = set()
         nonterminals.add(self._initial_symbol)
         for production in self._productions:
@@ -56,6 +67,7 @@ class Grammar(object):
         return nonterminals
 
     def _get_terminals(self):
+        """Helper to grammar constructor"""
         terminals = set()
         for production in self._productions:
             if production[1] != Utils.EPSILON:
@@ -63,25 +75,32 @@ class Grammar(object):
         return terminals
 
     def _make_transitions(self):
+        """Helper to conversion from a grammar to an automata"""
         transitions = dict()
         for production in self._productions:
-            input = Utils.TRANSITION(production[0], production[1])
+            src = Utils.TRANSITION(production[0], production[1])
             output = self._get_next_state(production)
-            self._include_transition(transitions, input, output)
+            self._include_transition(transitions, src, output)
         return transitions
 
     def _get_next_state(self, production):
+        """Helper to conversion from a grammar to an automata"""
         if len(production) == 3:
             return production[2]
         return Utils.NEW_FINAL_STATE
 
-    def _include_transition(self, transitions, input, output):
-        if not input in transitions.keys():
-            transitions[input] = list()
-        transitions[input].append(output)
+    def _include_transition(self, transitions, src, output):
+        """Helper to conversion from a grammar to an automata"""
+        if src not in transitions.keys():
+            transitions[src] = list()
+        transitions[src].append(output)
 
     @staticmethod
     def read_from_json(filename):
+        """Return an grammar from a json file
+
+        The path in filename don't need contain the '.json' extension.
+        """
         with open(filename + '.json', 'r') as read_file:
             data = json.load(read_file)
         productions = [tuple(production) for production in data['productions']]
