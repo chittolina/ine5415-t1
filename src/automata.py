@@ -126,18 +126,18 @@ class Automata:
         return Automata(self.alphabet, normal_states, normal_q0,
                         normal_final_states, normal_transitions)
 
-    def transition(self, state, input):
+    def transition(self, state, src):
         """Return a transition for the given state and input
 
-        Set of states resulting from the found transition or False if no transitions
-        is available for the received parameters.
+        Set of states resulting from the found transition or False if no
+        transitions is available for the received parameters.
 
         Type of parameter 'states' is a list.
         Type of parameter 'input' is a string.
         """
-        if input == '&':
-            input = Utils.EPSILON
-        transition = Utils.TRANSITION(state, input)
+        if src == '&':
+            src = Utils.EPSILON
+        transition = Utils.TRANSITION(state, src)
 
         if transition in self.transitions:
             return self.transitions[transition]
@@ -421,21 +421,21 @@ class Automata:
             dfa = self.to_dfa()
             return dfa.to_grammar()
         initial_symbol = self.q0.upper()
-        productions = self._makeProductions()
+        productions = self._make_productions()
         return Grammar(productions, initial_symbol)
 
-    def _makeProductions(self):
+    def _make_productions(self):
         productions = list()
-        for input in self.transitions:
-            for output in self.transitions[input]:
-                self._include_productions(productions, input, output)
+        for src in self.transitions:
+            for output in self.transitions[src]:
+                self._include_productions(productions, src, output)
         return productions
 
-    def _include_productions(self, productions, input, output):
+    def _include_productions(self, productions, src, output):
         if output in self.final_states:
-            production = (input[0].upper(), input[1])
+            production = (src[0].upper(), src[1])
             productions.append(production)
-        production = (input[0].upper(), input[1], output.upper())
+        production = (src[0].upper(), src[1], output.upper())
         productions.append(production)
 
     @staticmethod
