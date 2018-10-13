@@ -137,3 +137,13 @@ pip-selfcheck.json
 
 
 # End of https://www.gitignore.io/api/code,python
+# Created by https://www.gitignore.io/api/qml
+
+### QML ###
+### QML ###
+# Cached binary representations of QML and JS files
+*.qmlc
+*.jsc
+
+
+# End of https://www.gitignore.io/api/qml
