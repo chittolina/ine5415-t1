@@ -49,11 +49,10 @@ class Operator(QObject):
             result_string += '\n'
             for state in automata.states:
                 if state in automata.final_states:
-                    result_string += '* ' + state + '\t'
-                elif state == automata.q0:
-                    result_string += '-> ' + state + '\t'
-                else:
-                    result_string += state + '\t'
+                    result_string += '* '
+                if state == automata.q0:
+                    result_string += '-> '
+                result_string += state + '\t'
                 for input in list(automata.alphabet) + ['&']:
                     if automata.transition(state, input):
                         result_string += '\t' + str(list(automata.transition(state, input)))
@@ -114,11 +113,10 @@ class Operator(QObject):
         result_string += '\n'
         for state in a.states:
             if state in a.final_states:
-                result_string += '* ' + state + '\t'
-            elif state == a.q0:
-                result_string += '-> ' + state + '\t'
-            else:
-                result_string += state + '\t'
+                result_string += '* '
+            if state == a.q0:
+                result_string += '-> '
+            result_string += state + '\t'
             for input in list(a.alphabet) + ['&']:
                 if a.transition(state, input):
                     result_string += '\t' + str(list(a.transition(state, input)))
