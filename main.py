@@ -89,8 +89,12 @@ class Operator(QObject):
                 result_string += '-> '
             result_string += state + '\t'
             for input in list(a.alphabet) + ['&']:
-                if a.transition(state, input):
-                    result_string += '\t' + str(list(a.transition(state, input)))
+                transition = a.transition(state, input)
+                if transition:
+                    if isinstance(transition, list):
+                        result_string += '\t' + str(transition)
+                    else:
+                        result_string += '\t' + str([transition])
                 else:
                     result_string += '\t' + str(list([]))
             result_string += '\n'
