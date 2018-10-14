@@ -43,7 +43,7 @@ class Operator(QObject):
         for automata in self._automatas:
             for i, input in enumerate(list(automata.alphabet) + ['&']):
                 if i == 0:
-                    result_string += '\t\t\t' + input
+                    result_string += '\t\t' + input
                 else:
                     result_string += '\t' + input
             result_string += '\n'
@@ -79,17 +79,16 @@ class Operator(QObject):
 
         for i, input in enumerate(list(a.alphabet) + ['&']):
             if i == 0:
-                result_string += '\t\t\t' + input
+                result_string += '\t\t' + input
             else:
                 result_string += '\t' + input
         result_string += '\n'
         for state in a.states:
             if state in a.final_states:
-                result_string += '* ' + state + '\t'
-            elif state == a.q0:
-                result_string += '-> ' + state + '\t'
-            else:
-                result_string += state + '\t'
+                result_string += '* '
+            if state == a.q0:
+                result_string += '-> '
+            result_string += state + '\t'
             for input in list(a.alphabet) + ['&']:
                 if a.transition(state, input):
                     result_string += '\t' + str(list(a.transition(state, input)))
@@ -109,7 +108,7 @@ class Operator(QObject):
             return
         for i, input in enumerate(list(a.alphabet) + ['&']):
             if i == 0:
-                result_string += '\t\t\t' + input
+                result_string += '\t\t' + input
             else:
                 result_string += '\t' + input
         result_string += '\n'
