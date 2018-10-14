@@ -149,7 +149,7 @@ class Operator(QObject):
         for production in self._grammars[0]._productions:
             result_string += production[0] + '  ->  ' + production[1]
             if len(production) > 2:
-                result_string += '  |  ' + production[2]
+                result_string += production[2]
             result_string += '\n'
         return result_string
 
@@ -167,7 +167,7 @@ class Operator(QObject):
         for production in self._grammarFromAutomata._productions:
             result_string += production[0] + '  ->  ' + production[1]
             if len(production) > 2:
-                result_string += '  |  ' + production[2]
+                result_string += production[2]
             result_string += '\n'
         return result_string
 
