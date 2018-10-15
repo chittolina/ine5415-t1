@@ -49,9 +49,9 @@ class Grammar:
         The path in filename don't need contain the '.json' extension.
         """
         data = {
-            'nonterminals': self._nonterminals,
-            'terminals': self._terminals,
-            'productions': self._productions,
+            'nonterminals': list(self._nonterminals),
+            'terminals': list(self._terminals),
+            'productions': list(self._productions),
             'initial_symbol': self._initial_symbol
         }
         with open(filename + '.json', 'w') as write_file:
